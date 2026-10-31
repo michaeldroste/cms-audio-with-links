@@ -1,0 +1,22 @@
+{
+  "identifier": "com.trumpetstudio.cmsaudioplayerwithlinks",
+  "author": "Michael Droste",
+  "title": "CMS Audio Player with Links",
+  "group": "CMS",
+  "helpURL": "https://github.com/michaeldroste/cms-audio-with-links/releases/",
+  "deploy": true,
+  "requiresPhp": false,
+  "tags": [
+    "audio",
+    "player",
+    "cms",
+    "music",
+    "song",
+    "album",
+    "single",
+    "streaming",
+    "spotify",
+    "apple music",
+    "podcast"
+  ]
+}

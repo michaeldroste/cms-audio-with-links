@@ -1,0 +1,128 @@
+/* CMS Audio Player with Links — component styles */
+
+/* ── Artwork ───────────────────────────────────────────────────── */
+
+/* One square, two layers. .capl-cover-wrap owns the aspect ratio and both
+   children fill it absolutely, so artwork and placeholder overlay instead of
+   stacking. They used to be siblings in normal flow, which meant any state
+   where the image was not hidden rendered two squares — an empty one above the
+   placeholder.
+
+   Nothing here hides the placeholder: it is the default, sits on top, and is
+   removed by script.html (via .capl-hidden) only once real artwork has decoded.
+   A card whose script never runs therefore still looks finished. Deciding it
+   in markup order rather than with a selector also sidesteps a specificity
+   fight with the Tailwind display utilities on the image itself. */
+
+/* The image carries its address in data-src until script.html confirms it is a
+   real URL rather than an unresolved CMS token, so the browser never requests a
+   URL named after the binding. The static variant is a project file, never a
+   CMS binding, so it carries a real src from the start as well: the edit
+   canvas runs no page script, and without one it was hidden there for good.
+   The :not([src]) rule still covers an instance published before that. */
+.capl-cover-static:not([src]),
+.capl-cover-static.capl-broken {
+    display: none;
+}
+
+/* A title or artist that resolves to nothing (a CMS item with no artist
+   field is common) still spends the content stack's gap on both sides of an
+   empty line, doubling the space there. The template puts nothing but the
+   value inside each one, so an empty value is :empty. */
+.capl-title:empty,
+.capl-artist:empty {
+    display: none;
+}
+
+/* ── Audio element ─────────────────────────────────────────────── */
+
+.capl-audio-el {
+    display: none;
+}
+
+/* ── Buttons ───────────────────────────────────────────────────── */
+
+/* No `color` reset here on purpose: `.capl-btn` and the theme's `text-*`
+   utility have equal specificity, so declaring colour would win on source
+   order and black out every icon. The utility class on the element already
+   beats the user-agent button colour. */
+.capl-btn {
+    position: relative;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.15s ease, opacity 0.15s ease, transform 0.12s ease;
+}
+
+.capl-btn:active {
+    transform: scale(0.94);
+}
+
+.capl-btn:focus-visible,
+.capl-service:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+}
+
+/* Optional filled play button — pad the icon away from its background. */
+.capl-toggle:has(.capl-play-bg) {
+    padding: 0.6em;
+}
+
+.capl-play-bg {
+    z-index: 0;
+}
+
+.capl-icon-play,
+.capl-icon-pause {
+    z-index: 1;
+}
+
+/* The play glyph is optically left-heavy; nudge it back to centre. */
+.capl-icon-play {
+    transform: translateX(4%);
+}
+
+/* ── Skip arrow styles ─────────────────────────────────────────── */
+
+.capl-audio[data-arrow="bar"] .capl-arrow-chevron,
+.capl-audio[data-arrow="chevron"] .capl-arrow-bar {
+    display: none;
+}
+
+/* ── Progress ──────────────────────────────────────────────────── */
+
+.capl-track {
+    touch-action: none;
+}
+
+.capl-fill {
+    transition: width 0.1s linear;
+    pointer-events: none;
+}
+
+/* ── Streaming links ───────────────────────────────────────────── */
+
+.capl-service {
+    transition: color 0.15s ease, opacity 0.15s ease, transform 0.12s ease;
+}
+
+.capl-service:active {
+    transform: scale(0.94);
+}
+
+/* ── State helpers set by script.js ────────────────────────────── */
+
+/* Nothing to play / no link — remove the row entirely. */
+.capl-hidden {
+    display: none !important;
+}
+
+/* CMS token not yet resolved (editor preview only). Keep the control
+   visible so the card still reads as designed, but make it inert. */
+.capl-inert {
+    opacity: 0.5;
+    pointer-events: none;
+}

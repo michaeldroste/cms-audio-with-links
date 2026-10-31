@@ -1,0 +1,39 @@
+{
+    "title": "CMS Audio Player with Links",
+    "item": null,
+    "kind": {
+        "folder": {}
+    },
+    "expanded": true,
+    "identifier": "72E74DE3-93A4-44C4-A583-D2BF1068246C",
+    "children": [
+        {
+            "title": "CMS Audio Player with Links \u2014 CMS Item",
+            "item": {
+                "itemIdentifier": "4D8406E7-8B1F-483A-8108-5C4263504FF9",
+                "id": "B06F0EB0-4B41-4CC1-A5A0-C6EE32D8062E",
+                "kind": "prefab"
+            },
+            "children": [],
+            "identifier": "2B13B645-24A3-4EBA-9B19-83359F5D78D2",
+            "kind": {
+                "item": {}
+            },
+            "expanded": true
+        },
+        {
+            "title": "CMS Audio Player with Links \u2014 Standalone",
+            "item": {
+                "itemIdentifier": "2B31793F-5546-4754-80E8-4A67C3890409",
+                "id": "6DB9EC42-2A68-425E-9276-2654B83F6DBE",
+                "kind": "prefab"
+            },
+            "children": [],
+            "identifier": "2A040635-73FE-45A6-ABBE-A1FAC7962A03",
+            "kind": {
+                "item": {}
+            },
+            "expanded": true
+        }
+    ]
+}

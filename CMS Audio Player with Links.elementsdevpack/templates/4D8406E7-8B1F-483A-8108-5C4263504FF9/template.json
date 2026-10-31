@@ -1,0 +1,57 @@
+{
+  "title": "CMS Audio Player with Links \u2014 CMS Item",
+  "_allNodes": {
+    "rw0EB6F7DC_B66A_4286_A33B_47A49D6F7905": {
+      "isLinkedGlobalRootNode": false,
+      "layoutViewExpanded": true,
+      "anchors": [],
+      "containers": {},
+      "context": {
+        "globalContainerOverrides": [],
+        "values": {},
+        "globalPropertyOverrides": [],
+        "dataCollections": [],
+        "attributes": {
+          "locked": false,
+          "hidden": false
+        }
+      },
+      "identifier": "rw0EB6F7DC_B66A_4286_A33B_47A49D6F7905",
+      "parentIdentifier": "ROOT",
+      "elementId": "com.trumpetstudio.cmsaudioplayerwithlinks"
+    }
+  },
+  "_globals": {
+    "globals": {}
+  },
+  "identifier": "4D8406E7-8B1F-483A-8108-5C4263504FF9",
+  "_customComponents": {
+    "components": {}
+  },
+  "_resources": [],
+  "_rootNode": {
+    "isLinkedGlobalRootNode": false,
+    "layoutViewExpanded": true,
+    "anchors": [],
+    "containers": {
+      "content": {
+        "references": [
+          "rw0EB6F7DC_B66A_4286_A33B_47A49D6F7905"
+        ],
+        "layoutViewExpanded": true
+      }
+    },
+    "context": {
+      "attributes": {
+        "locked": false,
+        "hidden": false
+      },
+      "dataCollections": [],
+      "globalContainerOverrides": [],
+      "globalPropertyOverrides": [],
+      "values": {}
+    },
+    "identifier": "rw474862CC_E172_4464_B889_1A4FF7BF4B00",
+    "elementId": "com.realmacsoftware.rapidweaver.root"
+  }
+}

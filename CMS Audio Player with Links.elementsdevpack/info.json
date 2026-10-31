@@ -1,0 +1,11 @@
+{
+  "name": "CMS Audio Player with Links",
+  "identifier": "com.trumpetstudio.cmsaudioplayerwithlinkspack",
+  "author": "Michael Droste",
+  "version": 2,
+  "build": 13,
+  "categories": [
+    "components",
+    "templates"
+  ]
+}

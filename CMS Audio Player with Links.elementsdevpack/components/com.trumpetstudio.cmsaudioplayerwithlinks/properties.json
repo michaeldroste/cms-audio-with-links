@@ -1,0 +1,2440 @@
+{
+    "groups": [
+        {
+            "title": "Content",
+            "icon": "music.note",
+            "properties": [
+                {
+                    "title": "Track",
+                    "heading": {}
+                },
+                {
+                    "title": "Title",
+                    "id": "trackTitle",
+                    "info": "Song or episode title. Accepts plain text or a CMS field binding.",
+                    "responsive": false,
+                    "text": {
+                        "default": "{{item.title}}"
+                    },
+                    "ai": {
+                        "name": "trackTitle",
+                        "description": "Track title text, or a CMS binding such as item.title."
+                    }
+                },
+                {
+                    "title": "Artist",
+                    "id": "trackArtist",
+                    "responsive": false,
+                    "text": {
+                        "default": "{{item.artist}}"
+                    },
+                    "info": "Artist, band or author shown under the title.",
+                    "ai": {
+                        "name": "trackArtist",
+                        "description": "Artist or author name shown beneath the title."
+                    }
+                },
+                {
+                    "title": "Cover Image URL",
+                    "id": "imageUrl",
+                    "info": "Cover artwork address, or a CMS field binding. Takes priority over the fallback file below.",
+                    "responsive": false,
+                    "text": {
+                        "default": "{{item.image.src}}"
+                    },
+                    "ai": {
+                        "name": "imageUrl",
+                        "description": "Cover artwork URL or CMS binding."
+                    }
+                },
+                {
+                    "title": "Cover Alt Text",
+                    "id": "imageAlt",
+                    "info": "Describes the artwork for screen readers. Falls back to the track title if left blank.",
+                    "responsive": false,
+                    "text": {
+                        "default": "{{item.image.alt}}"
+                    },
+                    "ai": {
+                        "name": "imageAlt",
+                        "description": "Alt text for the cover artwork."
+                    }
+                },
+                {
+                    "title": "Audio URL",
+                    "id": "audioUrl",
+                    "info": "Audio file address, or a CMS field binding. Takes priority over the fallback file below.",
+                    "responsive": false,
+                    "text": {
+                        "default": "{{item.audio}}"
+                    },
+                    "ai": {
+                        "name": "audioUrl",
+                        "description": "Audio file URL or CMS binding."
+                    }
+                },
+                {
+                    "title": "Fallback Files",
+                    "heading": {}
+                },
+                {
+                    "title": "Cover Image File",
+                    "id": "imageFile",
+                    "info": "Used only when no Image URL is set. Drop an image here for non-CMS pages.",
+                    "resource": {
+                        "accepts": "image/*"
+                    },
+                    "ai": {
+                        "name": "imageFile",
+                        "description": "Fallback cover image resource used when no image URL is supplied."
+                    }
+                },
+                {
+                    "title": "Audio File",
+                    "id": "audioFile",
+                    "info": "Used only when no Audio URL is set. Drop an audio file here for non-CMS pages.",
+                    "resource": {
+                        "accepts": "audio/*"
+                    },
+                    "ai": {
+                        "name": "audioFile",
+                        "description": "Fallback audio resource used when no audio URL is supplied."
+                    }
+                }
+            ]
+        },
+        {
+            "title": "Layout",
+            "icon": "square.grid.2x2",
+            "properties": [
+                {
+                    "title": "Card",
+                    "heading": {}
+                },
+                {
+                    "title": "Max Width",
+                    "id": "maxWidth",
+                    "format": "max-w-[{{value}}px]",
+                    "info": "Widest the card will grow. It always shrinks to fit a narrow column.",
+                    "slider": {
+                        "default": 340,
+                        "min": 180,
+                        "max": 900,
+                        "step": 10,
+                        "round": true,
+                        "units": "px"
+                    },
+                    "ai": {
+                        "name": "maxWidth",
+                        "description": "Maximum card width in pixels."
+                    }
+                },
+                {
+                    "title": "Alignment",
+                    "id": "cardAlign",
+                    "select": {
+                        "default": "mx-auto",
+                        "items": [
+                            {
+                                "value": "mx-auto",
+                                "title": "Center"
+                            },
+                            {
+                                "value": "mr-auto",
+                                "title": "Left"
+                            },
+                            {
+                                "value": "ml-auto",
+                                "title": "Right"
+                            }
+                        ]
+                    },
+                    "info": "Where the card sits when it is narrower than the space around it.",
+                    "ai": {
+                        "name": "cardAlign",
+                        "description": "Card alignment within its container: centre, left or right."
+                    }
+                },
+                {
+                    "title": "Card Padding",
+                    "id": "cardPadding",
+                    "format": "p-[{{value}}px]",
+                    "slider": {
+                        "default": 14,
+                        "min": 0,
+                        "max": 64,
+                        "step": 1,
+                        "round": true,
+                        "units": "px"
+                    },
+                    "info": "Space between the card edge and its contents.",
+                    "ai": {
+                        "name": "cardPadding",
+                        "description": "Inner padding of the card in pixels."
+                    }
+                },
+                {
+                    "title": "Row Spacing",
+                    "id": "contentGap",
+                    "format": "gap-[{{value}}px]",
+                    "info": "Vertical space between artwork, text, transport and links.",
+                    "slider": {
+                        "default": 14,
+                        "min": 0,
+                        "max": 48,
+                        "step": 1,
+                        "round": true,
+                        "units": "px"
+                    },
+                    "ai": {
+                        "name": "contentGap",
+                        "description": "Vertical gap between stacked sections of the card."
+                    }
+                },
+                {
+                    "title": "Artwork",
+                    "heading": {}
+                },
+                {
+                    "title": "Show Artwork",
+                    "id": "showCover",
+                    "responsive": false,
+                    "switch": {
+                        "default": true
+                    },
+                    "info": "Show the cover artwork above the title.",
+                    "ai": {
+                        "name": "showCover",
+                        "description": "Whether the cover artwork is displayed."
+                    }
+                },
+                {
+                    "title": "Artwork Shape",
+                    "id": "coverAspect",
+                    "visible": "showCover == true",
+                    "select": {
+                        "default": "aspect-square",
+                        "items": [
+                            {
+                                "value": "aspect-square",
+                                "title": "Square"
+                            },
+                            {
+                                "value": "aspect-[4/3]",
+                                "title": "4 : 3"
+                            },
+                            {
+                                "value": "aspect-video",
+                                "title": "16 : 9"
+                            },
+                            {
+                                "value": "aspect-auto",
+                                "title": "Original"
+                            }
+                        ]
+                    },
+                    "info": "Shape of the artwork frame. Square suits albums, video suits YouTube thumbnails.",
+                    "ai": {
+                        "name": "coverAspect",
+                        "description": "Aspect ratio of the cover artwork frame.",
+                        "visible": "showCover == true"
+                    }
+                },
+                {
+                    "title": "Text",
+                    "heading": {}
+                },
+                {
+                    "title": "Show Title",
+                    "id": "showTitle",
+                    "responsive": false,
+                    "switch": {
+                        "default": true
+                    },
+                    "info": "Show the track title.",
+                    "ai": {
+                        "name": "showTitle",
+                        "description": "Whether the track title is displayed."
+                    }
+                },
+                {
+                    "title": "Title Size",
+                    "id": "titleSize",
+                    "visible": "showTitle == true",
+                    "select": {
+                        "default": "text-lg",
+                        "items": [
+                            {
+                                "value": "text-xs",
+                                "title": "Tiny"
+                            },
+                            {
+                                "value": "text-sm",
+                                "title": "Small"
+                            },
+                            {
+                                "value": "text-base",
+                                "title": "Medium"
+                            },
+                            {
+                                "value": "text-lg",
+                                "title": "Large"
+                            },
+                            {
+                                "value": "text-xl",
+                                "title": "Extra Large"
+                            },
+                            {
+                                "value": "text-2xl",
+                                "title": "Huge"
+                            }
+                        ]
+                    },
+                    "info": "Title text size.",
+                    "ai": {
+                        "name": "titleSize",
+                        "description": "Font size of the track title.",
+                        "visible": "showTitle == true"
+                    }
+                },
+                {
+                    "title": "Title Weight",
+                    "id": "titleWeight",
+                    "visible": "showTitle == true",
+                    "select": {
+                        "default": "font-bold",
+                        "items": [
+                            {
+                                "value": "font-normal",
+                                "title": "Regular"
+                            },
+                            {
+                                "value": "font-medium",
+                                "title": "Medium"
+                            },
+                            {
+                                "value": "font-semibold",
+                                "title": "Semibold"
+                            },
+                            {
+                                "value": "font-bold",
+                                "title": "Bold"
+                            }
+                        ]
+                    },
+                    "info": "Title font weight.",
+                    "ai": {
+                        "name": "titleWeight",
+                        "description": "Font weight of the track title.",
+                        "visible": "showTitle == true"
+                    }
+                },
+                {
+                    "title": "Show Artist",
+                    "id": "showArtist",
+                    "responsive": false,
+                    "switch": {
+                        "default": true
+                    },
+                    "info": "Show the artist line under the title.",
+                    "ai": {
+                        "name": "showArtist",
+                        "description": "Whether the artist line is displayed."
+                    }
+                },
+                {
+                    "title": "Artist Size",
+                    "id": "artistSize",
+                    "visible": "showArtist == true",
+                    "select": {
+                        "default": "text-base",
+                        "items": [
+                            {
+                                "value": "text-xs",
+                                "title": "Tiny"
+                            },
+                            {
+                                "value": "text-sm",
+                                "title": "Small"
+                            },
+                            {
+                                "value": "text-base",
+                                "title": "Medium"
+                            },
+                            {
+                                "value": "text-lg",
+                                "title": "Large"
+                            },
+                            {
+                                "value": "text-xl",
+                                "title": "Extra Large"
+                            }
+                        ]
+                    },
+                    "info": "Artist text size.",
+                    "ai": {
+                        "name": "artistSize",
+                        "description": "Font size of the artist line.",
+                        "visible": "showArtist == true"
+                    }
+                },
+                {
+                    "title": "Text Alignment",
+                    "id": "textAlign",
+                    "select": {
+                        "default": "text-center",
+                        "items": [
+                            {
+                                "value": "text-center",
+                                "title": "Center"
+                            },
+                            {
+                                "value": "text-left",
+                                "title": "Left"
+                            },
+                            {
+                                "value": "text-right",
+                                "title": "Right"
+                            }
+                        ]
+                    },
+                    "info": "Alignment of the title and artist text.",
+                    "ai": {
+                        "name": "textAlign",
+                        "description": "Text alignment for title and artist."
+                    }
+                },
+                {
+                    "title": "Controls Alignment",
+                    "id": "controlsAlign",
+                    "select": {
+                        "default": "justify-center",
+                        "items": [
+                            {
+                                "value": "justify-center",
+                                "title": "Center"
+                            },
+                            {
+                                "value": "justify-start",
+                                "title": "Left"
+                            },
+                            {
+                                "value": "justify-end",
+                                "title": "Right"
+                            },
+                            {
+                                "value": "justify-between",
+                                "title": "Spread"
+                            }
+                        ]
+                    },
+                    "info": "Where the transport buttons sit across the card.",
+                    "ai": {
+                        "name": "controlsAlign",
+                        "description": "Horizontal alignment of the transport buttons."
+                    }
+                }
+            ]
+        },
+        {
+            "title": "Colors",
+            "icon": "paintpalette",
+            "properties": [
+                {
+                    "title": "Card",
+                    "heading": {}
+                },
+                {
+                    "title": "Card Background",
+                    "id": "cardBg",
+                    "format": "bg-{{value}}",
+                    "themeColor": {
+                        "default": {
+                            "name": "surface",
+                            "brightness": 50,
+                            "darkName": "surface",
+                            "darkBrightness": 50
+                        }
+                    },
+                    "info": "Card background.",
+                    "ai": {
+                        "name": "cardBg",
+                        "description": "Background colour of the card."
+                    }
+                },
+                {
+                    "title": "Border Color",
+                    "id": "borderColor",
+                    "format": "border-{{value}}",
+                    "themeColor": {
+                        "default": {
+                            "name": "surface",
+                            "brightness": 950,
+                            "darkName": "surface",
+                            "darkBrightness": 950
+                        }
+                    },
+                    "info": "Card border colour. Only visible once Border Width is above zero.",
+                    "ai": {
+                        "name": "borderColor",
+                        "description": "Border colour of the card."
+                    }
+                },
+                {
+                    "title": "Border Width",
+                    "id": "borderWidth",
+                    "select": {
+                        "default": "border",
+                        "items": [
+                            {
+                                "value": "border-0",
+                                "title": "None"
+                            },
+                            {
+                                "value": "border",
+                                "title": "Thin"
+                            },
+                            {
+                                "value": "border-2",
+                                "title": "Medium"
+                            },
+                            {
+                                "value": "border-4",
+                                "title": "Thick"
+                            }
+                        ]
+                    },
+                    "info": "Thickness of the card border. None removes it entirely.",
+                    "ai": {
+                        "name": "borderWidth",
+                        "description": "Border width of the card."
+                    }
+                },
+                {
+                    "title": "Card Shadow",
+                    "id": "cardShadow",
+                    "themeShadow": {
+                        "mode": "box",
+                        "default": {
+                            "name": "none"
+                        }
+                    },
+                    "info": "Drop shadow behind the whole card.",
+                    "ai": {
+                        "name": "cardShadow",
+                        "description": "Shadow depth behind the card."
+                    }
+                },
+                {
+                    "title": "Artwork Shadow",
+                    "id": "coverShadow",
+                    "visible": "showCover == true",
+                    "themeShadow": {
+                        "mode": "box",
+                        "default": {
+                            "name": "none"
+                        }
+                    },
+                    "info": "Drop shadow behind the artwork only.",
+                    "ai": {
+                        "name": "coverShadow",
+                        "description": "Shadow depth behind the cover artwork.",
+                        "visible": "showCover == true"
+                    }
+                },
+                {
+                    "title": "Text",
+                    "heading": {}
+                },
+                {
+                    "title": "Title Color",
+                    "id": "titleColor",
+                    "format": "text-{{value}}",
+                    "themeColor": {
+                        "default": {
+                            "name": "surface",
+                            "brightness": 950,
+                            "darkName": "surface",
+                            "darkBrightness": 950
+                        }
+                    },
+                    "info": "Track title colour.",
+                    "ai": {
+                        "name": "titleColor",
+                        "description": "Colour of the track title."
+                    }
+                },
+                {
+                    "title": "Artist Color",
+                    "id": "artistColor",
+                    "format": "text-{{value}}",
+                    "themeColor": {
+                        "default": {
+                            "name": "slate",
+                            "brightness": 500,
+                            "darkName": "slate",
+                            "darkBrightness": 500
+                        }
+                    },
+                    "info": "Artist line colour.",
+                    "ai": {
+                        "name": "artistColor",
+                        "description": "Colour of the artist line."
+                    }
+                },
+                {
+                    "title": "Time Color",
+                    "id": "timeColor",
+                    "format": "text-{{value}}",
+                    "themeColor": {
+                        "default": {
+                            "name": "slate",
+                            "brightness": 500,
+                            "darkName": "slate",
+                            "darkBrightness": 500
+                        }
+                    },
+                    "info": "Elapsed and total time colour.",
+                    "ai": {
+                        "name": "timeColor",
+                        "description": "Colour of the time readout."
+                    }
+                },
+                {
+                    "title": "Transport Controls",
+                    "heading": {}
+                },
+                {
+                    "title": "Play Icon",
+                    "id": "playColor",
+                    "format": "text-{{value}}",
+                    "themeColor": {
+                        "default": {
+                            "name": "surface",
+                            "brightness": 950,
+                            "darkName": "surface",
+                            "darkBrightness": 950
+                        }
+                    },
+                    "info": "Play and pause icon colour.",
+                    "ai": {
+                        "name": "playColor",
+                        "description": "Colour of the play/pause icon."
+                    }
+                },
+                {
+                    "title": "Play Icon Hover",
+                    "id": "playHoverColor",
+                    "format": "hover:text-{{value}}",
+                    "themeColor": {
+                        "default": {
+                            "name": "brand",
+                            "brightness": 600,
+                            "darkName": "brand",
+                            "darkBrightness": 600
+                        }
+                    },
+                    "info": "Play and pause icon colour on hover.",
+                    "ai": {
+                        "name": "playHoverColor",
+                        "description": "Hover colour of the play/pause icon."
+                    }
+                },
+                {
+                    "title": "Play Button Background",
+                    "id": "showPlayBg",
+                    "responsive": false,
+                    "switch": {
+                        "default": false
+                    },
+                    "info": "Draw a filled disc behind the play icon.",
+                    "ai": {
+                        "name": "showPlayBg",
+                        "description": "Whether a filled background disc sits behind the play icon."
+                    }
+                },
+                {
+                    "title": "Play Background Color",
+                    "id": "playBgColor",
+                    "visible": "showPlayBg == true",
+                    "format": "bg-{{value}}",
+                    "themeColor": {
+                        "default": {
+                            "name": "brand",
+                            "brightness": 600,
+                            "darkName": "brand",
+                            "darkBrightness": 600
+                        }
+                    },
+                    "info": "Colour of the disc behind the play icon.",
+                    "ai": {
+                        "name": "playBgColor",
+                        "description": "Colour of the play button background disc.",
+                        "visible": "showPlayBg == true"
+                    }
+                },
+                {
+                    "title": "Skip Icon",
+                    "id": "skipColor",
+                    "format": "text-{{value}}",
+                    "themeColor": {
+                        "default": {
+                            "name": "surface",
+                            "brightness": 950,
+                            "darkName": "surface",
+                            "darkBrightness": 950
+                        }
+                    },
+                    "info": "Skip button colour.",
+                    "ai": {
+                        "name": "skipColor",
+                        "description": "Colour of the skip buttons."
+                    }
+                },
+                {
+                    "title": "Skip Icon Hover",
+                    "id": "skipHoverColor",
+                    "format": "hover:text-{{value}}",
+                    "themeColor": {
+                        "default": {
+                            "name": "brand",
+                            "brightness": 600,
+                            "darkName": "brand",
+                            "darkBrightness": 600
+                        }
+                    },
+                    "info": "Skip button colour on hover.",
+                    "ai": {
+                        "name": "skipHoverColor",
+                        "description": "Hover colour of the skip buttons."
+                    }
+                },
+                {
+                    "title": "Progress Bar",
+                    "heading": {}
+                },
+                {
+                    "title": "Progress Track",
+                    "id": "progressTrackColor",
+                    "format": "bg-{{value}}",
+                    "themeColor": {
+                        "default": {
+                            "name": "slate",
+                            "brightness": 200,
+                            "darkName": "slate",
+                            "darkBrightness": 200
+                        }
+                    },
+                    "info": "Unplayed part of the progress bar.",
+                    "ai": {
+                        "name": "progressTrackColor",
+                        "description": "Colour of the progress bar track."
+                    }
+                },
+                {
+                    "title": "Progress Fill",
+                    "id": "progressFillColor",
+                    "format": "bg-{{value}}",
+                    "themeColor": {
+                        "default": {
+                            "name": "brand",
+                            "brightness": 600,
+                            "darkName": "brand",
+                            "darkBrightness": 600
+                        }
+                    },
+                    "info": "Played part of the progress bar.",
+                    "ai": {
+                        "name": "progressFillColor",
+                        "description": "Colour of the progress bar fill."
+                    }
+                },
+                {
+                    "title": "Streaming Icons",
+                    "heading": {}
+                },
+                {
+                    "title": "Brand Mark Tone",
+                    "id": "brandIconTone",
+                    "responsive": false,
+                    "segmented": {
+                        "default": "text-black",
+                        "items": [
+                            {
+                                "value": "text-white",
+                                "title": "White"
+                            },
+                            {
+                                "value": "text-black",
+                                "title": "Black"
+                            }
+                        ]
+                    },
+                    "info": "Spotify, Apple Music, YouTube, Amazon Music and Bandcamp may only be drawn in their own brand colour, black or white, so this component uses black or white and you choose which. Pick the one your Card Background can carry — white on a dark card, black on a light one. It ships black because the card ships white. This is the card's own light or dark, not the site's, so it does not change when a visitor switches theme.",
+                    "ai": {
+                        "name": "brandIconTone",
+                        "description": "Whether the five brand marks draw white or black. Choose to suit the Card Background; brand guidelines permit only black or white here.",
+                        "values": [
+                            "text-white",
+                            "text-black"
+                        ]
+                    }
+                },
+                {
+                    "title": "Service Icon",
+                    "id": "serviceColor",
+                    "format": "text-{{value}}",
+                    "themeColor": {
+                        "default": {
+                            "name": "surface",
+                            "brightness": 950,
+                            "darkName": "surface",
+                            "darkBrightness": 950
+                        }
+                    },
+                    "info": "Colour of the Website, Email, Feed and custom icons. The five brand marks ignore this and use Brand Mark Tone above, because their owners' guidelines do not permit an arbitrary colour.",
+                    "ai": {
+                        "name": "serviceColor",
+                        "description": "Colour of the streaming service icons. Applies to the Website, Email, Feed and custom icons only; the five brand marks are fixed at black/white."
+                    }
+                },
+                {
+                    "title": "Service Icon Hover",
+                    "id": "serviceHoverColor",
+                    "format": "hover:text-{{value}}",
+                    "themeColor": {
+                        "default": {
+                            "name": "brand",
+                            "brightness": 600,
+                            "darkName": "brand",
+                            "darkBrightness": 600
+                        }
+                    },
+                    "info": "Hover colour for the Website, Email, Feed and custom icons. The five brand marks fade slightly instead of changing colour, for the same reason.",
+                    "ai": {
+                        "name": "serviceHoverColor",
+                        "description": "Hover colour of the streaming service icons. Applies to the Website, Email, Feed and custom icons only; the five brand marks fade instead."
+                    }
+                },
+                {
+                    "title": "Artwork Placeholder",
+                    "heading": {}
+                },
+                {
+                    "title": "Placeholder Background",
+                    "id": "placeholderBg",
+                    "format": "bg-{{value}}",
+                    "themeColor": {
+                        "default": {
+                            "name": "slate",
+                            "brightness": 200,
+                            "darkName": "slate",
+                            "darkBrightness": 200
+                        }
+                    },
+                    "info": "Background of the artwork placeholder, shown when no cover loads.",
+                    "ai": {
+                        "name": "placeholderBg",
+                        "description": "Background colour of the artwork placeholder tile."
+                    }
+                },
+                {
+                    "title": "Placeholder Icon",
+                    "id": "placeholderColor",
+                    "format": "text-{{value}}",
+                    "themeColor": {
+                        "default": {
+                            "name": "slate",
+                            "brightness": 400,
+                            "darkName": "slate",
+                            "darkBrightness": 400
+                        }
+                    },
+                    "info": "Icon colour inside the artwork placeholder.",
+                    "ai": {
+                        "name": "placeholderColor",
+                        "description": "Icon colour within the artwork placeholder tile."
+                    }
+                }
+            ]
+        },
+        {
+            "title": "Corner Radius",
+            "icon": "square.dashed",
+            "properties": [
+                {
+                    "title": "Every corner is independent — unlink the corners in each control to set them one at a time.",
+                    "information": {}
+                },
+                {
+                    "title": "Card",
+                    "id": "cardRadius",
+                    "themeBorderRadius": {
+                        "default": {
+                            "base": {
+                                "topLeft": "3xl",
+                                "topRight": "3xl",
+                                "bottomLeft": "3xl",
+                                "bottomRight": "3xl"
+                            }
+                        }
+                    },
+                    "info": "Rounding of the card corners.",
+                    "ai": {
+                        "name": "cardRadius",
+                        "description": "Corner radius of the card."
+                    }
+                },
+                {
+                    "title": "Artwork",
+                    "id": "coverRadius",
+                    "visible": "showCover == true",
+                    "themeBorderRadius": {
+                        "default": {
+                            "base": {
+                                "topLeft": "xl",
+                                "topRight": "xl",
+                                "bottomLeft": "xl",
+                                "bottomRight": "xl"
+                            }
+                        }
+                    },
+                    "info": "Rounding of the artwork corners.",
+                    "ai": {
+                        "name": "coverRadius",
+                        "description": "Corner radius of the cover artwork.",
+                        "visible": "showCover == true"
+                    }
+                },
+                {
+                    "title": "Progress Bar",
+                    "id": "progressRadius",
+                    "themeBorderRadius": {
+                        "default": {
+                            "base": {
+                                "topLeft": "full",
+                                "topRight": "full",
+                                "bottomLeft": "full",
+                                "bottomRight": "full"
+                            }
+                        }
+                    },
+                    "info": "Rounding of the progress bar ends.",
+                    "ai": {
+                        "name": "progressRadius",
+                        "description": "Corner radius of the progress bar."
+                    }
+                },
+                {
+                    "title": "Play Button",
+                    "id": "playRadius",
+                    "themeBorderRadius": {
+                        "default": {
+                            "base": {
+                                "topLeft": "full",
+                                "topRight": "full",
+                                "bottomLeft": "full",
+                                "bottomRight": "full"
+                            }
+                        }
+                    },
+                    "info": "Rounding of the play button.",
+                    "ai": {
+                        "name": "playRadius",
+                        "description": "Corner radius of the play button."
+                    }
+                },
+                {
+                    "title": "Skip Buttons",
+                    "id": "skipRadius",
+                    "themeBorderRadius": {
+                        "default": {
+                            "base": {
+                                "topLeft": "full",
+                                "topRight": "full",
+                                "bottomLeft": "full",
+                                "bottomRight": "full"
+                            }
+                        }
+                    },
+                    "info": "Rounding of the skip buttons.",
+                    "ai": {
+                        "name": "skipRadius",
+                        "description": "Corner radius of the skip buttons."
+                    }
+                },
+                {
+                    "title": "Streaming Icons",
+                    "id": "serviceRadius",
+                    "themeBorderRadius": {
+                        "default": {
+                            "base": {
+                                "topLeft": "md",
+                                "topRight": "md",
+                                "bottomLeft": "md",
+                                "bottomRight": "md"
+                            }
+                        }
+                    },
+                    "info": "Rounding of the streaming icon hit areas.",
+                    "ai": {
+                        "name": "serviceRadius",
+                        "description": "Corner radius of the streaming icon buttons."
+                    }
+                }
+            ]
+        },
+        {
+            "title": "Controls",
+            "icon": "play.circle",
+            "properties": [
+                {
+                    "title": "Transport",
+                    "heading": {}
+                },
+                {
+                    "title": "Show Transport",
+                    "id": "showTransport",
+                    "responsive": false,
+                    "switch": {
+                        "default": true
+                    },
+                    "info": "Show the play and skip buttons. Turn off for a cover-and-links card with no playback.",
+                    "ai": {
+                        "name": "showTransport",
+                        "description": "Whether the transport row is displayed."
+                    }
+                },
+                {
+                    "title": "Play Icon Size",
+                    "id": "playSize",
+                    "visible": "showTransport == true",
+                    "format": "w-[{{value}}px] h-[{{value}}px]",
+                    "slider": {
+                        "default": 46,
+                        "min": 16,
+                        "max": 96,
+                        "step": 1,
+                        "round": true,
+                        "units": "px"
+                    },
+                    "info": "Diameter of the play button.",
+                    "ai": {
+                        "name": "playSize",
+                        "description": "Size of the play button in pixels.",
+                        "visible": "showTransport == true"
+                    }
+                },
+                {
+                    "title": "Skip Icon Size",
+                    "id": "skipSize",
+                    "visible": "showTransport == true",
+                    "format": "w-[{{value}}px] h-[{{value}}px]",
+                    "slider": {
+                        "default": 26,
+                        "min": 12,
+                        "max": 64,
+                        "step": 1,
+                        "round": true,
+                        "units": "px"
+                    },
+                    "info": "Size of the skip button icons.",
+                    "ai": {
+                        "name": "skipSize",
+                        "description": "Size of the skip buttons in pixels.",
+                        "visible": "showTransport == true"
+                    }
+                },
+                {
+                    "title": "Button Spacing",
+                    "id": "transportGap",
+                    "visible": "showTransport == true",
+                    "format": "gap-[{{value}}px]",
+                    "slider": {
+                        "default": 18,
+                        "min": 0,
+                        "max": 64,
+                        "step": 1,
+                        "round": true,
+                        "units": "px"
+                    },
+                    "info": "Space between the transport buttons.",
+                    "ai": {
+                        "name": "transportGap",
+                        "description": "Gap between transport buttons in pixels.",
+                        "visible": "showTransport == true"
+                    }
+                },
+                {
+                    "title": "Outer Skip Buttons",
+                    "heading": {}
+                },
+                {
+                    "title": "Show Circular Skip",
+                    "id": "showCircleSkip",
+                    "info": "The outer pair of skip buttons, drawn as a circular arrow with the number of seconds inside.",
+                    "visible": "showTransport == true",
+                    "responsive": false,
+                    "switch": {
+                        "default": true
+                    },
+                    "ai": {
+                        "name": "showCircleSkip",
+                        "description": "Whether the circular skip buttons are displayed.",
+                        "visible": "showTransport == true"
+                    }
+                },
+                {
+                    "title": "Circular Skip Amount",
+                    "id": "circleSkipAmount",
+                    "visible": "showTransport == true && showCircleSkip == true",
+                    "responsive": false,
+                    "slider": {
+                        "default": 20,
+                        "min": 1,
+                        "max": 120,
+                        "step": 1,
+                        "round": true,
+                        "units": "s"
+                    },
+                    "info": "Seconds the circular buttons jump. The number is drawn inside the icon.",
+                    "ai": {
+                        "name": "circleSkipAmount",
+                        "description": "Seconds skipped by the circular buttons.",
+                        "visible": "showTransport == true && showCircleSkip == true"
+                    }
+                },
+                {
+                    "title": "Inner Skip Buttons",
+                    "heading": {}
+                },
+                {
+                    "title": "Show Arrow Skip",
+                    "id": "showArrowSkip",
+                    "info": "The inner pair of skip buttons, drawn as arrows.",
+                    "visible": "showTransport == true",
+                    "responsive": false,
+                    "switch": {
+                        "default": false
+                    },
+                    "ai": {
+                        "name": "showArrowSkip",
+                        "description": "Whether the arrow skip buttons are displayed.",
+                        "visible": "showTransport == true"
+                    }
+                },
+                {
+                    "title": "Arrow Skip Amount",
+                    "id": "arrowSkipAmount",
+                    "visible": "showTransport == true && showArrowSkip == true",
+                    "responsive": false,
+                    "slider": {
+                        "default": 20,
+                        "min": 1,
+                        "max": 120,
+                        "step": 1,
+                        "round": true,
+                        "units": "s"
+                    },
+                    "info": "Seconds the arrow buttons jump.",
+                    "ai": {
+                        "name": "arrowSkipAmount",
+                        "description": "Seconds skipped by the arrow buttons.",
+                        "visible": "showTransport == true && showArrowSkip == true"
+                    }
+                },
+                {
+                    "title": "Arrow Style",
+                    "id": "arrowSkipStyle",
+                    "visible": "showTransport == true && showArrowSkip == true",
+                    "responsive": false,
+                    "select": {
+                        "default": "bar",
+                        "items": [
+                            {
+                                "value": "bar",
+                                "title": "Bar + Triangle"
+                            },
+                            {
+                                "value": "chevron",
+                                "title": "Double Chevron"
+                            }
+                        ]
+                    },
+                    "info": "Arrow icon style: a bar-and-triangle skip mark, or a double chevron.",
+                    "ai": {
+                        "name": "arrowSkipStyle",
+                        "description": "Visual style of the arrow skip buttons.",
+                        "visible": "showTransport == true && showArrowSkip == true"
+                    }
+                },
+                {
+                    "title": "Progress",
+                    "heading": {}
+                },
+                {
+                    "title": "Show Progress Bar",
+                    "id": "showProgress",
+                    "responsive": false,
+                    "switch": {
+                        "default": true
+                    },
+                    "info": "Show the progress bar. It can be dragged or keyboard-seeked. Hidden while Show Transport is off, since nothing can play.",
+                    "ai": {
+                        "name": "showProgress",
+                        "description": "Whether the progress bar is displayed."
+                    }
+                },
+                {
+                    "title": "Progress Height",
+                    "id": "progressHeight",
+                    "visible": "showProgress == true",
+                    "format": "h-[{{value}}px]",
+                    "slider": {
+                        "default": 8,
+                        "min": 2,
+                        "max": 32,
+                        "step": 1,
+                        "round": true,
+                        "units": "px"
+                    },
+                    "info": "Thickness of the progress bar.",
+                    "ai": {
+                        "name": "progressHeight",
+                        "description": "Height of the progress bar in pixels.",
+                        "visible": "showProgress == true"
+                    }
+                },
+                {
+                    "title": "Show Time",
+                    "id": "showTime",
+                    "visible": "showProgress == true",
+                    "responsive": false,
+                    "switch": {
+                        "default": false
+                    },
+                    "info": "Show elapsed and total time beside the progress bar. The readout sits in the progress bar's row, so it goes with it.",
+                    "ai": {
+                        "name": "showTime",
+                        "description": "Whether the time readout is displayed.",
+                        "visible": "showProgress == true"
+                    }
+                },
+                {
+                    "title": "Playback",
+                    "heading": {}
+                },
+                {
+                    "title": "Loop",
+                    "id": "loopAudio",
+                    "responsive": false,
+                    "switch": {
+                        "trueValue": "1",
+                        "falseValue": "0",
+                        "default": false
+                    },
+                    "info": "Restart the track automatically when it reaches the end.",
+                    "ai": {
+                        "name": "loopAudio",
+                        "description": "Whether the audio loops."
+                    }
+                },
+                {
+                    "title": "Pause Other Players",
+                    "id": "autoPauseOthers",
+                    "info": "Pause every other player on the page when this one starts, so two tracks never overlap.",
+                    "responsive": false,
+                    "switch": {
+                        "trueValue": "1",
+                        "falseValue": "0",
+                        "default": true
+                    },
+                    "ai": {
+                        "name": "autoPauseOthers",
+                        "description": "Whether starting this player pauses other players on the page."
+                    }
+                },
+                {
+                    "title": "Download Button",
+                    "id": "showDownload",
+                    "responsive": false,
+                    "info": "Offers the audio file as a download beneath the player. Hidden automatically when there is no audio to download.",
+                    "ai": {
+                        "name": "showDownload",
+                        "description": "Whether a download link for the audio file is shown."
+                    },
+                    "switch": {
+                        "default": false
+                    }
+                },
+                {
+                    "title": "Preload",
+                    "id": "preload",
+                    "responsive": false,
+                    "select": {
+                        "default": "none",
+                        "items": [
+                            {
+                                "value": "metadata",
+                                "title": "Metadata (shows duration)"
+                            },
+                            {
+                                "value": "none",
+                                "title": "None (fastest page load)"
+                            },
+                            {
+                                "value": "auto",
+                                "title": "Full (instant playback)"
+                            }
+                        ]
+                    },
+                    "info": "How much audio the browser fetches before play. Metadata reads only the duration; None waits until play is pressed and is kindest on mobile data.",
+                    "ai": {
+                        "name": "preload",
+                        "description": "How much audio the browser preloads."
+                    }
+                }
+            ]
+        },
+        {
+            "title": "Labels",
+            "icon": "text.bubble",
+            "properties": [
+                {
+                    "title": "Spoken by screen readers and shown as tooltips. Translate these for a non-English site.",
+                    "information": {}
+                },
+                {
+                    "title": "Play Button",
+                    "id": "playLabel",
+                    "responsive": false,
+                    "info": "Name for the play button while playback is stopped.",
+                    "ai": {
+                        "name": "playLabel",
+                        "description": "Accessible label for the play button."
+                    },
+                    "text": {
+                        "default": "Play",
+                        "placeholder": "Play"
+                    }
+                },
+                {
+                    "title": "Pause Button",
+                    "id": "pauseLabel",
+                    "responsive": false,
+                    "info": "Name for the same button while audio is playing.",
+                    "ai": {
+                        "name": "pauseLabel",
+                        "description": "Accessible label for the pause button."
+                    },
+                    "text": {
+                        "default": "Pause",
+                        "placeholder": "Pause"
+                    }
+                },
+                {
+                    "title": "Progress Bar",
+                    "id": "seekLabel",
+                    "responsive": false,
+                    "info": "Name for the draggable progress bar.",
+                    "ai": {
+                        "name": "seekLabel",
+                        "description": "Accessible label for the seek slider."
+                    },
+                    "text": {
+                        "default": "Seek",
+                        "placeholder": "Seek"
+                    }
+                },
+                {
+                    "title": "Skip Back",
+                    "id": "skipBackLabel",
+                    "responsive": false,
+                    "info": "Name for both skip-back buttons. %s is replaced with that button's own number of seconds.",
+                    "ai": {
+                        "name": "skipBackLabel",
+                        "description": "Accessible label pattern for skip-back buttons; %s becomes the seconds value."
+                    },
+                    "text": {
+                        "default": "Back %s seconds",
+                        "placeholder": "Back %s seconds"
+                    }
+                },
+                {
+                    "title": "Skip Forward",
+                    "id": "skipForwardLabel",
+                    "responsive": false,
+                    "info": "Name for both skip-forward buttons. %s is replaced with that button's own number of seconds.",
+                    "ai": {
+                        "name": "skipForwardLabel",
+                        "description": "Accessible label pattern for skip-forward buttons; %s becomes the seconds value."
+                    },
+                    "text": {
+                        "default": "Forward %s seconds",
+                        "placeholder": "Forward %s seconds"
+                    }
+                },
+                {
+                    "title": "Audio Unavailable",
+                    "id": "audioUnavailableLabel",
+                    "responsive": false,
+                    "info": "Shown on the play button when the audio file fails to load.",
+                    "ai": {
+                        "name": "audioUnavailableLabel",
+                        "description": "Accessible label used when the audio source cannot be loaded."
+                    },
+                    "text": {
+                        "default": "Audio unavailable",
+                        "placeholder": "Audio unavailable"
+                    }
+                },
+                {
+                    "title": "Download Button",
+                    "id": "downloadLabel",
+                    "responsive": false,
+                    "info": "Name for the download link.",
+                    "ai": {
+                        "name": "downloadLabel",
+                        "description": "Accessible label for the audio download link.",
+                        "visible": "showDownload == true"
+                    },
+                    "visible": "showDownload == true",
+                    "text": {
+                        "default": "Download",
+                        "placeholder": "Download"
+                    }
+                }
+            ]
+        },
+        {
+            "title": "Streaming Links",
+            "icon": "link",
+            "properties": [
+                {
+                    "title": "Show Streaming Icons",
+                    "id": "showServices",
+                    "responsive": false,
+                    "switch": {
+                        "default": true
+                    },
+                    "info": "Show the row of streaming links under the player.",
+                    "ai": {
+                        "name": "showServices",
+                        "description": "Whether the streaming links row is displayed."
+                    }
+                },
+                {
+                    "title": "Any link that resolves to nothing hides its own icon.",
+                    "information": {},
+                    "visible": "showServices == true"
+                },
+                {
+                    "title": "Slot 1",
+                    "heading": {},
+                    "visible": "showServices == true"
+                },
+                {
+                    "title": "Show",
+                    "id": "service1Enabled",
+                    "responsive": false,
+                    "info": "Include streaming slot 1 in the icon row.",
+                    "ai": {
+                        "name": "service1Enabled",
+                        "description": "Whether streaming slot 1 is shown.",
+                        "visible": "showServices == true"
+                    },
+                    "visible": "showServices == true",
+                    "switch": {
+                        "default": true
+                    }
+                },
+                {
+                    "title": "Service",
+                    "id": "service1Type",
+                    "responsive": false,
+                    "info": "Chooses the icon and its default label. Pick Custom to paste your own SVG path.",
+                    "ai": {
+                        "name": "service1Type",
+                        "description": "Which service icon slot 1 displays.",
+                        "visible": "showServices == true && service1Enabled == true"
+                    },
+                    "visible": "showServices == true && service1Enabled == true",
+                    "select": {
+                        "default": "spotify",
+                        "items": [
+                            {
+                                "value": "spotify",
+                                "title": "Spotify"
+                            },
+                            {
+                                "value": "apple",
+                                "title": "Apple Music"
+                            },
+                            {
+                                "value": "youtube",
+                                "title": "YouTube"
+                            },
+                            {
+                                "value": "amazon",
+                                "title": "Amazon Music"
+                            },
+                            {
+                                "value": "bandcamp",
+                                "title": "Bandcamp"
+                            },
+                            {
+                                "value": "rss",
+                                "title": "Podcast Feed"
+                            },
+                            {
+                                "value": "website",
+                                "title": "Website"
+                            },
+                            {
+                                "value": "email",
+                                "title": "Email"
+                            },
+                            {
+                                "value": "custom",
+                                "title": "Custom icon…"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "title": "Link",
+                    "id": "spotifyUrl",
+                    "responsive": false,
+                    "info": "A full address starting with https:// (or mailto: for an email slot), or a CMS field binding. One starting www. is given https:// for you; any other address without it is read as a page on your own site. Leave blank and this icon hides itself.",
+                    "ai": {
+                        "name": "spotifyUrl",
+                        "description": "Destination URL for streaming slot 1.",
+                        "visible": "showServices == true && service1Enabled == true"
+                    },
+                    "visible": "showServices == true && service1Enabled == true",
+                    "text": {
+                        "default": "{{item.spotify}}",
+                        "placeholder": "https://…"
+                    }
+                },
+                {
+                    "title": "Label",
+                    "id": "service1Label",
+                    "responsive": false,
+                    "info": "Screen-reader name and tooltip. Leave blank to use the service name above.",
+                    "ai": {
+                        "name": "service1Label",
+                        "description": "Accessible label for streaming slot 1.",
+                        "visible": "showServices == true && service1Enabled == true"
+                    },
+                    "visible": "showServices == true && service1Enabled == true",
+                    "text": {
+                        "default": "",
+                        "placeholder": "Listen on …"
+                    }
+                },
+                {
+                    "title": "Custom Path",
+                    "id": "service1Path",
+                    "responsive": false,
+                    "info": "The 'd' attribute of a single SVG <path>. Paste from any icon set.",
+                    "ai": {
+                        "name": "service1Path",
+                        "description": "Custom SVG path data for streaming slot 1.",
+                        "visible": "showServices == true && service1Enabled == true && service1Type == 'custom'"
+                    },
+                    "visible": "showServices == true && service1Enabled == true && service1Type == 'custom'",
+                    "text": {
+                        "default": "",
+                        "placeholder": "M12 0C5.4 0 0 5.4 …"
+                    }
+                },
+                {
+                    "title": "Custom viewBox",
+                    "id": "service1ViewBox",
+                    "responsive": false,
+                    "info": "Coordinate space of the pasted path. Most icon sets use 0 0 24 24.",
+                    "ai": {
+                        "name": "service1ViewBox",
+                        "description": "viewBox for the custom icon in slot 1.",
+                        "visible": "showServices == true && service1Enabled == true && service1Type == 'custom'"
+                    },
+                    "visible": "showServices == true && service1Enabled == true && service1Type == 'custom'",
+                    "text": {
+                        "default": "0 0 24 24",
+                        "placeholder": "0 0 24 24"
+                    }
+                },
+                {
+                    "title": "Custom Icon Is Filled",
+                    "id": "service1Filled",
+                    "responsive": false,
+                    "info": "On for solid logo shapes, off for outline icons drawn with strokes.",
+                    "ai": {
+                        "name": "service1Filled",
+                        "description": "Whether the custom icon in slot 1 is a filled shape.",
+                        "visible": "showServices == true && service1Enabled == true && service1Type == 'custom'"
+                    },
+                    "visible": "showServices == true && service1Enabled == true && service1Type == 'custom'",
+                    "switch": {
+                        "default": true
+                    }
+                },
+                {
+                    "title": "Slot 2",
+                    "heading": {},
+                    "visible": "showServices == true"
+                },
+                {
+                    "title": "Show",
+                    "id": "service2Enabled",
+                    "responsive": false,
+                    "info": "Include streaming slot 2 in the icon row.",
+                    "ai": {
+                        "name": "service2Enabled",
+                        "description": "Whether streaming slot 2 is shown.",
+                        "visible": "showServices == true"
+                    },
+                    "visible": "showServices == true",
+                    "switch": {
+                        "default": true
+                    }
+                },
+                {
+                    "title": "Service",
+                    "id": "service2Type",
+                    "responsive": false,
+                    "info": "Chooses the icon and its default label. Pick Custom to paste your own SVG path.",
+                    "ai": {
+                        "name": "service2Type",
+                        "description": "Which service icon slot 2 displays.",
+                        "visible": "showServices == true && service2Enabled == true"
+                    },
+                    "visible": "showServices == true && service2Enabled == true",
+                    "select": {
+                        "default": "apple",
+                        "items": [
+                            {
+                                "value": "spotify",
+                                "title": "Spotify"
+                            },
+                            {
+                                "value": "apple",
+                                "title": "Apple Music"
+                            },
+                            {
+                                "value": "youtube",
+                                "title": "YouTube"
+                            },
+                            {
+                                "value": "amazon",
+                                "title": "Amazon Music"
+                            },
+                            {
+                                "value": "bandcamp",
+                                "title": "Bandcamp"
+                            },
+                            {
+                                "value": "rss",
+                                "title": "Podcast Feed"
+                            },
+                            {
+                                "value": "website",
+                                "title": "Website"
+                            },
+                            {
+                                "value": "email",
+                                "title": "Email"
+                            },
+                            {
+                                "value": "custom",
+                                "title": "Custom icon…"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "title": "Link",
+                    "id": "appleUrl",
+                    "responsive": false,
+                    "info": "A full address starting with https:// (or mailto: for an email slot), or a CMS field binding. One starting www. is given https:// for you; any other address without it is read as a page on your own site. Leave blank and this icon hides itself.",
+                    "ai": {
+                        "name": "appleUrl",
+                        "description": "Destination URL for streaming slot 2.",
+                        "visible": "showServices == true && service2Enabled == true"
+                    },
+                    "visible": "showServices == true && service2Enabled == true",
+                    "text": {
+                        "default": "{{item.apple}}",
+                        "placeholder": "https://…"
+                    }
+                },
+                {
+                    "title": "Label",
+                    "id": "service2Label",
+                    "responsive": false,
+                    "info": "Screen-reader name and tooltip. Leave blank to use the service name above.",
+                    "ai": {
+                        "name": "service2Label",
+                        "description": "Accessible label for streaming slot 2.",
+                        "visible": "showServices == true && service2Enabled == true"
+                    },
+                    "visible": "showServices == true && service2Enabled == true",
+                    "text": {
+                        "default": "",
+                        "placeholder": "Listen on …"
+                    }
+                },
+                {
+                    "title": "Custom Path",
+                    "id": "service2Path",
+                    "responsive": false,
+                    "info": "The 'd' attribute of a single SVG <path>. Paste from any icon set.",
+                    "ai": {
+                        "name": "service2Path",
+                        "description": "Custom SVG path data for streaming slot 2.",
+                        "visible": "showServices == true && service2Enabled == true && service2Type == 'custom'"
+                    },
+                    "visible": "showServices == true && service2Enabled == true && service2Type == 'custom'",
+                    "text": {
+                        "default": "",
+                        "placeholder": "M12 0C5.4 0 0 5.4 …"
+                    }
+                },
+                {
+                    "title": "Custom viewBox",
+                    "id": "service2ViewBox",
+                    "responsive": false,
+                    "info": "Coordinate space of the pasted path. Most icon sets use 0 0 24 24.",
+                    "ai": {
+                        "name": "service2ViewBox",
+                        "description": "viewBox for the custom icon in slot 2.",
+                        "visible": "showServices == true && service2Enabled == true && service2Type == 'custom'"
+                    },
+                    "visible": "showServices == true && service2Enabled == true && service2Type == 'custom'",
+                    "text": {
+                        "default": "0 0 24 24",
+                        "placeholder": "0 0 24 24"
+                    }
+                },
+                {
+                    "title": "Custom Icon Is Filled",
+                    "id": "service2Filled",
+                    "responsive": false,
+                    "info": "On for solid logo shapes, off for outline icons drawn with strokes.",
+                    "ai": {
+                        "name": "service2Filled",
+                        "description": "Whether the custom icon in slot 2 is a filled shape.",
+                        "visible": "showServices == true && service2Enabled == true && service2Type == 'custom'"
+                    },
+                    "visible": "showServices == true && service2Enabled == true && service2Type == 'custom'",
+                    "switch": {
+                        "default": true
+                    }
+                },
+                {
+                    "title": "Slot 3",
+                    "heading": {},
+                    "visible": "showServices == true"
+                },
+                {
+                    "title": "Show",
+                    "id": "service3Enabled",
+                    "responsive": false,
+                    "info": "Include streaming slot 3 in the icon row.",
+                    "ai": {
+                        "name": "service3Enabled",
+                        "description": "Whether streaming slot 3 is shown.",
+                        "visible": "showServices == true"
+                    },
+                    "visible": "showServices == true",
+                    "switch": {
+                        "default": true
+                    }
+                },
+                {
+                    "title": "Service",
+                    "id": "service3Type",
+                    "responsive": false,
+                    "info": "Chooses the icon and its default label. Pick Custom to paste your own SVG path.",
+                    "ai": {
+                        "name": "service3Type",
+                        "description": "Which service icon slot 3 displays.",
+                        "visible": "showServices == true && service3Enabled == true"
+                    },
+                    "visible": "showServices == true && service3Enabled == true",
+                    "select": {
+                        "default": "youtube",
+                        "items": [
+                            {
+                                "value": "spotify",
+                                "title": "Spotify"
+                            },
+                            {
+                                "value": "apple",
+                                "title": "Apple Music"
+                            },
+                            {
+                                "value": "youtube",
+                                "title": "YouTube"
+                            },
+                            {
+                                "value": "amazon",
+                                "title": "Amazon Music"
+                            },
+                            {
+                                "value": "bandcamp",
+                                "title": "Bandcamp"
+                            },
+                            {
+                                "value": "rss",
+                                "title": "Podcast Feed"
+                            },
+                            {
+                                "value": "website",
+                                "title": "Website"
+                            },
+                            {
+                                "value": "email",
+                                "title": "Email"
+                            },
+                            {
+                                "value": "custom",
+                                "title": "Custom icon…"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "title": "Link",
+                    "id": "youtubeUrl",
+                    "responsive": false,
+                    "info": "A full address starting with https:// (or mailto: for an email slot), or a CMS field binding. One starting www. is given https:// for you; any other address without it is read as a page on your own site. Leave blank and this icon hides itself.",
+                    "ai": {
+                        "name": "youtubeUrl",
+                        "description": "Destination URL for streaming slot 3.",
+                        "visible": "showServices == true && service3Enabled == true"
+                    },
+                    "visible": "showServices == true && service3Enabled == true",
+                    "text": {
+                        "default": "{{item.youtube}}",
+                        "placeholder": "https://…"
+                    }
+                },
+                {
+                    "title": "Label",
+                    "id": "service3Label",
+                    "responsive": false,
+                    "info": "Screen-reader name and tooltip. Leave blank to use the service name above.",
+                    "ai": {
+                        "name": "service3Label",
+                        "description": "Accessible label for streaming slot 3.",
+                        "visible": "showServices == true && service3Enabled == true"
+                    },
+                    "visible": "showServices == true && service3Enabled == true",
+                    "text": {
+                        "default": "",
+                        "placeholder": "Listen on …"
+                    }
+                },
+                {
+                    "title": "Custom Path",
+                    "id": "service3Path",
+                    "responsive": false,
+                    "info": "The 'd' attribute of a single SVG <path>. Paste from any icon set.",
+                    "ai": {
+                        "name": "service3Path",
+                        "description": "Custom SVG path data for streaming slot 3.",
+                        "visible": "showServices == true && service3Enabled == true && service3Type == 'custom'"
+                    },
+                    "visible": "showServices == true && service3Enabled == true && service3Type == 'custom'",
+                    "text": {
+                        "default": "",
+                        "placeholder": "M12 0C5.4 0 0 5.4 …"
+                    }
+                },
+                {
+                    "title": "Custom viewBox",
+                    "id": "service3ViewBox",
+                    "responsive": false,
+                    "info": "Coordinate space of the pasted path. Most icon sets use 0 0 24 24.",
+                    "ai": {
+                        "name": "service3ViewBox",
+                        "description": "viewBox for the custom icon in slot 3.",
+                        "visible": "showServices == true && service3Enabled == true && service3Type == 'custom'"
+                    },
+                    "visible": "showServices == true && service3Enabled == true && service3Type == 'custom'",
+                    "text": {
+                        "default": "0 0 24 24",
+                        "placeholder": "0 0 24 24"
+                    }
+                },
+                {
+                    "title": "Custom Icon Is Filled",
+                    "id": "service3Filled",
+                    "responsive": false,
+                    "info": "On for solid logo shapes, off for outline icons drawn with strokes.",
+                    "ai": {
+                        "name": "service3Filled",
+                        "description": "Whether the custom icon in slot 3 is a filled shape.",
+                        "visible": "showServices == true && service3Enabled == true && service3Type == 'custom'"
+                    },
+                    "visible": "showServices == true && service3Enabled == true && service3Type == 'custom'",
+                    "switch": {
+                        "default": true
+                    }
+                },
+                {
+                    "title": "Slot 4",
+                    "heading": {},
+                    "visible": "showServices == true"
+                },
+                {
+                    "title": "Show",
+                    "id": "service4Enabled",
+                    "responsive": false,
+                    "info": "Include streaming slot 4 in the icon row.",
+                    "ai": {
+                        "name": "service4Enabled",
+                        "description": "Whether streaming slot 4 is shown.",
+                        "visible": "showServices == true"
+                    },
+                    "visible": "showServices == true",
+                    "switch": {
+                        "default": true
+                    }
+                },
+                {
+                    "title": "Service",
+                    "id": "service4Type",
+                    "responsive": false,
+                    "info": "Chooses the icon and its default label. Pick Custom to paste your own SVG path.",
+                    "ai": {
+                        "name": "service4Type",
+                        "description": "Which service icon slot 4 displays.",
+                        "visible": "showServices == true && service4Enabled == true"
+                    },
+                    "visible": "showServices == true && service4Enabled == true",
+                    "select": {
+                        "default": "amazon",
+                        "items": [
+                            {
+                                "value": "spotify",
+                                "title": "Spotify"
+                            },
+                            {
+                                "value": "apple",
+                                "title": "Apple Music"
+                            },
+                            {
+                                "value": "youtube",
+                                "title": "YouTube"
+                            },
+                            {
+                                "value": "amazon",
+                                "title": "Amazon Music"
+                            },
+                            {
+                                "value": "bandcamp",
+                                "title": "Bandcamp"
+                            },
+                            {
+                                "value": "rss",
+                                "title": "Podcast Feed"
+                            },
+                            {
+                                "value": "website",
+                                "title": "Website"
+                            },
+                            {
+                                "value": "email",
+                                "title": "Email"
+                            },
+                            {
+                                "value": "custom",
+                                "title": "Custom icon…"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "title": "Link",
+                    "id": "amazonUrl",
+                    "responsive": false,
+                    "info": "A full address starting with https:// (or mailto: for an email slot), or a CMS field binding. One starting www. is given https:// for you; any other address without it is read as a page on your own site. Leave blank and this icon hides itself.",
+                    "ai": {
+                        "name": "amazonUrl",
+                        "description": "Destination URL for streaming slot 4.",
+                        "visible": "showServices == true && service4Enabled == true"
+                    },
+                    "visible": "showServices == true && service4Enabled == true",
+                    "text": {
+                        "default": "{{item.amazon}}",
+                        "placeholder": "https://…"
+                    }
+                },
+                {
+                    "title": "Label",
+                    "id": "service4Label",
+                    "responsive": false,
+                    "info": "Screen-reader name and tooltip. Leave blank to use the service name above.",
+                    "ai": {
+                        "name": "service4Label",
+                        "description": "Accessible label for streaming slot 4.",
+                        "visible": "showServices == true && service4Enabled == true"
+                    },
+                    "visible": "showServices == true && service4Enabled == true",
+                    "text": {
+                        "default": "",
+                        "placeholder": "Listen on …"
+                    }
+                },
+                {
+                    "title": "Custom Path",
+                    "id": "service4Path",
+                    "responsive": false,
+                    "info": "The 'd' attribute of a single SVG <path>. Paste from any icon set.",
+                    "ai": {
+                        "name": "service4Path",
+                        "description": "Custom SVG path data for streaming slot 4.",
+                        "visible": "showServices == true && service4Enabled == true && service4Type == 'custom'"
+                    },
+                    "visible": "showServices == true && service4Enabled == true && service4Type == 'custom'",
+                    "text": {
+                        "default": "",
+                        "placeholder": "M12 0C5.4 0 0 5.4 …"
+                    }
+                },
+                {
+                    "title": "Custom viewBox",
+                    "id": "service4ViewBox",
+                    "responsive": false,
+                    "info": "Coordinate space of the pasted path. Most icon sets use 0 0 24 24.",
+                    "ai": {
+                        "name": "service4ViewBox",
+                        "description": "viewBox for the custom icon in slot 4.",
+                        "visible": "showServices == true && service4Enabled == true && service4Type == 'custom'"
+                    },
+                    "visible": "showServices == true && service4Enabled == true && service4Type == 'custom'",
+                    "text": {
+                        "default": "0 0 24 24",
+                        "placeholder": "0 0 24 24"
+                    }
+                },
+                {
+                    "title": "Custom Icon Is Filled",
+                    "id": "service4Filled",
+                    "responsive": false,
+                    "info": "On for solid logo shapes, off for outline icons drawn with strokes.",
+                    "ai": {
+                        "name": "service4Filled",
+                        "description": "Whether the custom icon in slot 4 is a filled shape.",
+                        "visible": "showServices == true && service4Enabled == true && service4Type == 'custom'"
+                    },
+                    "visible": "showServices == true && service4Enabled == true && service4Type == 'custom'",
+                    "switch": {
+                        "default": true
+                    }
+                },
+                {
+                    "title": "Slot 5",
+                    "heading": {},
+                    "visible": "showServices == true"
+                },
+                {
+                    "title": "Show",
+                    "id": "service5Enabled",
+                    "responsive": false,
+                    "info": "Include streaming slot 5 in the icon row.",
+                    "ai": {
+                        "name": "service5Enabled",
+                        "description": "Whether streaming slot 5 is shown.",
+                        "visible": "showServices == true"
+                    },
+                    "visible": "showServices == true",
+                    "switch": {
+                        "default": false
+                    }
+                },
+                {
+                    "title": "Service",
+                    "id": "service5Type",
+                    "responsive": false,
+                    "info": "Chooses the icon and its default label. Pick Custom to paste your own SVG path.",
+                    "ai": {
+                        "name": "service5Type",
+                        "description": "Which service icon slot 5 displays.",
+                        "visible": "showServices == true && service5Enabled == true"
+                    },
+                    "visible": "showServices == true && service5Enabled == true",
+                    "select": {
+                        "default": "website",
+                        "items": [
+                            {
+                                "value": "spotify",
+                                "title": "Spotify"
+                            },
+                            {
+                                "value": "apple",
+                                "title": "Apple Music"
+                            },
+                            {
+                                "value": "youtube",
+                                "title": "YouTube"
+                            },
+                            {
+                                "value": "amazon",
+                                "title": "Amazon Music"
+                            },
+                            {
+                                "value": "bandcamp",
+                                "title": "Bandcamp"
+                            },
+                            {
+                                "value": "rss",
+                                "title": "Podcast Feed"
+                            },
+                            {
+                                "value": "website",
+                                "title": "Website"
+                            },
+                            {
+                                "value": "email",
+                                "title": "Email"
+                            },
+                            {
+                                "value": "custom",
+                                "title": "Custom icon…"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "title": "Link",
+                    "id": "service5Url",
+                    "responsive": false,
+                    "info": "A full address starting with https:// (or mailto: for an email slot), or a CMS field binding. One starting www. is given https:// for you; any other address without it is read as a page on your own site. Leave blank and this icon hides itself.",
+                    "ai": {
+                        "name": "service5Url",
+                        "description": "Destination URL for streaming slot 5.",
+                        "visible": "showServices == true && service5Enabled == true"
+                    },
+                    "visible": "showServices == true && service5Enabled == true",
+                    "text": {
+                        "default": "",
+                        "placeholder": "https://…"
+                    }
+                },
+                {
+                    "title": "Label",
+                    "id": "service5Label",
+                    "responsive": false,
+                    "info": "Screen-reader name and tooltip. Leave blank to use the service name above.",
+                    "ai": {
+                        "name": "service5Label",
+                        "description": "Accessible label for streaming slot 5.",
+                        "visible": "showServices == true && service5Enabled == true"
+                    },
+                    "visible": "showServices == true && service5Enabled == true",
+                    "text": {
+                        "default": "",
+                        "placeholder": "Listen on …"
+                    }
+                },
+                {
+                    "title": "Custom Path",
+                    "id": "service5Path",
+                    "responsive": false,
+                    "info": "The 'd' attribute of a single SVG <path>. Paste from any icon set.",
+                    "ai": {
+                        "name": "service5Path",
+                        "description": "Custom SVG path data for streaming slot 5.",
+                        "visible": "showServices == true && service5Enabled == true && service5Type == 'custom'"
+                    },
+                    "visible": "showServices == true && service5Enabled == true && service5Type == 'custom'",
+                    "text": {
+                        "default": "",
+                        "placeholder": "M12 0C5.4 0 0 5.4 …"
+                    }
+                },
+                {
+                    "title": "Custom viewBox",
+                    "id": "service5ViewBox",
+                    "responsive": false,
+                    "info": "Coordinate space of the pasted path. Most icon sets use 0 0 24 24.",
+                    "ai": {
+                        "name": "service5ViewBox",
+                        "description": "viewBox for the custom icon in slot 5.",
+                        "visible": "showServices == true && service5Enabled == true && service5Type == 'custom'"
+                    },
+                    "visible": "showServices == true && service5Enabled == true && service5Type == 'custom'",
+                    "text": {
+                        "default": "0 0 24 24",
+                        "placeholder": "0 0 24 24"
+                    }
+                },
+                {
+                    "title": "Custom Icon Is Filled",
+                    "id": "service5Filled",
+                    "responsive": false,
+                    "info": "On for solid logo shapes, off for outline icons drawn with strokes.",
+                    "ai": {
+                        "name": "service5Filled",
+                        "description": "Whether the custom icon in slot 5 is a filled shape.",
+                        "visible": "showServices == true && service5Enabled == true && service5Type == 'custom'"
+                    },
+                    "visible": "showServices == true && service5Enabled == true && service5Type == 'custom'",
+                    "switch": {
+                        "default": true
+                    }
+                },
+                {
+                    "title": "Slot 6",
+                    "heading": {},
+                    "visible": "showServices == true"
+                },
+                {
+                    "title": "Show",
+                    "id": "service6Enabled",
+                    "responsive": false,
+                    "info": "Include streaming slot 6 in the icon row.",
+                    "ai": {
+                        "name": "service6Enabled",
+                        "description": "Whether streaming slot 6 is shown.",
+                        "visible": "showServices == true"
+                    },
+                    "visible": "showServices == true",
+                    "switch": {
+                        "default": false
+                    }
+                },
+                {
+                    "title": "Service",
+                    "id": "service6Type",
+                    "responsive": false,
+                    "info": "Chooses the icon and its default label. Pick Custom to paste your own SVG path.",
+                    "ai": {
+                        "name": "service6Type",
+                        "description": "Which service icon slot 6 displays.",
+                        "visible": "showServices == true && service6Enabled == true"
+                    },
+                    "visible": "showServices == true && service6Enabled == true",
+                    "select": {
+                        "default": "website",
+                        "items": [
+                            {
+                                "value": "spotify",
+                                "title": "Spotify"
+                            },
+                            {
+                                "value": "apple",
+                                "title": "Apple Music"
+                            },
+                            {
+                                "value": "youtube",
+                                "title": "YouTube"
+                            },
+                            {
+                                "value": "amazon",
+                                "title": "Amazon Music"
+                            },
+                            {
+                                "value": "bandcamp",
+                                "title": "Bandcamp"
+                            },
+                            {
+                                "value": "rss",
+                                "title": "Podcast Feed"
+                            },
+                            {
+                                "value": "website",
+                                "title": "Website"
+                            },
+                            {
+                                "value": "email",
+                                "title": "Email"
+                            },
+                            {
+                                "value": "custom",
+                                "title": "Custom icon…"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "title": "Link",
+                    "id": "service6Url",
+                    "responsive": false,
+                    "info": "A full address starting with https:// (or mailto: for an email slot), or a CMS field binding. One starting www. is given https:// for you; any other address without it is read as a page on your own site. Leave blank and this icon hides itself.",
+                    "ai": {
+                        "name": "service6Url",
+                        "description": "Destination URL for streaming slot 6.",
+                        "visible": "showServices == true && service6Enabled == true"
+                    },
+                    "visible": "showServices == true && service6Enabled == true",
+                    "text": {
+                        "default": "",
+                        "placeholder": "https://…"
+                    }
+                },
+                {
+                    "title": "Label",
+                    "id": "service6Label",
+                    "responsive": false,
+                    "info": "Screen-reader name and tooltip. Leave blank to use the service name above.",
+                    "ai": {
+                        "name": "service6Label",
+                        "description": "Accessible label for streaming slot 6.",
+                        "visible": "showServices == true && service6Enabled == true"
+                    },
+                    "visible": "showServices == true && service6Enabled == true",
+                    "text": {
+                        "default": "",
+                        "placeholder": "Listen on …"
+                    }
+                },
+                {
+                    "title": "Custom Path",
+                    "id": "service6Path",
+                    "responsive": false,
+                    "info": "The 'd' attribute of a single SVG <path>. Paste from any icon set.",
+                    "ai": {
+                        "name": "service6Path",
+                        "description": "Custom SVG path data for streaming slot 6.",
+                        "visible": "showServices == true && service6Enabled == true && service6Type == 'custom'"
+                    },
+                    "visible": "showServices == true && service6Enabled == true && service6Type == 'custom'",
+                    "text": {
+                        "default": "",
+                        "placeholder": "M12 0C5.4 0 0 5.4 …"
+                    }
+                },
+                {
+                    "title": "Custom viewBox",
+                    "id": "service6ViewBox",
+                    "responsive": false,
+                    "info": "Coordinate space of the pasted path. Most icon sets use 0 0 24 24.",
+                    "ai": {
+                        "name": "service6ViewBox",
+                        "description": "viewBox for the custom icon in slot 6.",
+                        "visible": "showServices == true && service6Enabled == true && service6Type == 'custom'"
+                    },
+                    "visible": "showServices == true && service6Enabled == true && service6Type == 'custom'",
+                    "text": {
+                        "default": "0 0 24 24",
+                        "placeholder": "0 0 24 24"
+                    }
+                },
+                {
+                    "title": "Custom Icon Is Filled",
+                    "id": "service6Filled",
+                    "responsive": false,
+                    "info": "On for solid logo shapes, off for outline icons drawn with strokes.",
+                    "ai": {
+                        "name": "service6Filled",
+                        "description": "Whether the custom icon in slot 6 is a filled shape.",
+                        "visible": "showServices == true && service6Enabled == true && service6Type == 'custom'"
+                    },
+                    "visible": "showServices == true && service6Enabled == true && service6Type == 'custom'",
+                    "switch": {
+                        "default": true
+                    }
+                },
+                {
+                    "title": "Appearance",
+                    "heading": {},
+                    "visible": "showServices == true || showDownload == true"
+                },
+                {
+                    "title": "Icon Size",
+                    "id": "serviceSize",
+                    "visible": "showServices == true || showDownload == true",
+                    "format": "w-[{{value}}px] h-[{{value}}px]",
+                    "slider": {
+                        "default": 26,
+                        "min": 12,
+                        "max": 64,
+                        "step": 1,
+                        "round": true,
+                        "units": "px"
+                    },
+                    "info": "Size of the streaming icons, and of the Download button, which shares their styling.",
+                    "ai": {
+                        "name": "serviceSize",
+                        "description": "Size of the streaming icons and the Download button in pixels.",
+                        "visible": "showServices == true || showDownload == true"
+                    }
+                },
+                {
+                    "title": "Icon Spacing",
+                    "id": "serviceGap",
+                    "visible": "showServices == true",
+                    "format": "gap-[{{value}}px]",
+                    "slider": {
+                        "default": 26,
+                        "min": 0,
+                        "max": 72,
+                        "step": 1,
+                        "round": true,
+                        "units": "px"
+                    },
+                    "info": "Space between the streaming icons.",
+                    "ai": {
+                        "name": "serviceGap",
+                        "description": "Gap between streaming icons in pixels.",
+                        "visible": "showServices == true"
+                    }
+                },
+                {
+                    "title": "Icon Alignment",
+                    "id": "serviceAlign",
+                    "visible": "showServices == true",
+                    "select": {
+                        "default": "justify-center",
+                        "items": [
+                            {
+                                "value": "justify-center",
+                                "title": "Center"
+                            },
+                            {
+                                "value": "justify-start",
+                                "title": "Left"
+                            },
+                            {
+                                "value": "justify-end",
+                                "title": "Right"
+                            },
+                            {
+                                "value": "justify-between",
+                                "title": "Spread"
+                            }
+                        ]
+                    },
+                    "info": "Where the streaming icons sit across the card.",
+                    "ai": {
+                        "name": "serviceAlign",
+                        "description": "Horizontal alignment of the streaming icons.",
+                        "visible": "showServices == true"
+                    }
+                },
+                {
+                    "title": "Open In New Tab",
+                    "id": "serviceNewTab",
+                    "visible": "showServices == true",
+                    "responsive": false,
+                    "switch": {
+                        "trueValue": "_blank",
+                        "falseValue": "_self",
+                        "default": true
+                    },
+                    "info": "Open streaming links in a new tab.",
+                    "ai": {
+                        "name": "serviceNewTab",
+                        "description": "Whether streaming links open in a new browser tab.",
+                        "visible": "showServices == true"
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,148 @@
+{
+  "title": "CMS Audio Player with Links \u2014 Standalone",
+  "_allNodes": {
+    "rw59DDDAAA_D290_4904_98D7_23957485C252": {
+      "isLinkedGlobalRootNode": false,
+      "layoutViewExpanded": true,
+      "anchors": [],
+      "containers": {},
+      "context": {
+        "globalContainerOverrides": [],
+        "values": {
+          "trackTitle": {
+            "R": {
+              "responsiveValues": {
+                "base": {
+                  "S": "Track Title"
+                }
+              }
+            }
+          },
+          "trackArtist": {
+            "R": {
+              "responsiveValues": {
+                "base": {
+                  "S": "Artist Name"
+                }
+              }
+            }
+          },
+          "imageUrl": {
+            "R": {
+              "responsiveValues": {
+                "base": {
+                  "S": ""
+                }
+              }
+            }
+          },
+          "imageAlt": {
+            "R": {
+              "responsiveValues": {
+                "base": {
+                  "S": ""
+                }
+              }
+            }
+          },
+          "audioUrl": {
+            "R": {
+              "responsiveValues": {
+                "base": {
+                  "S": ""
+                }
+              }
+            }
+          },
+          "spotifyUrl": {
+            "R": {
+              "responsiveValues": {
+                "base": {
+                  "S": ""
+                }
+              }
+            }
+          },
+          "appleUrl": {
+            "R": {
+              "responsiveValues": {
+                "base": {
+                  "S": ""
+                }
+              }
+            }
+          },
+          "youtubeUrl": {
+            "R": {
+              "responsiveValues": {
+                "base": {
+                  "S": ""
+                }
+              }
+            }
+          },
+          "amazonUrl": {
+            "R": {
+              "responsiveValues": {
+                "base": {
+                  "S": ""
+                }
+              }
+            }
+          },
+          "showTime": {
+            "R": {
+              "responsiveValues": {
+                "base": {
+                  "B": true
+                }
+              }
+            }
+          }
+        },
+        "globalPropertyOverrides": [],
+        "dataCollections": [],
+        "attributes": {
+          "locked": false,
+          "hidden": false
+        }
+      },
+      "identifier": "rw59DDDAAA_D290_4904_98D7_23957485C252",
+      "parentIdentifier": "ROOT",
+      "elementId": "com.trumpetstudio.cmsaudioplayerwithlinks"
+    }
+  },
+  "_globals": {
+    "globals": {}
+  },
+  "identifier": "2B31793F-5546-4754-80E8-4A67C3890409",
+  "_customComponents": {
+    "components": {}
+  },
+  "_resources": [],
+  "_rootNode": {
+    "isLinkedGlobalRootNode": false,
+    "layoutViewExpanded": true,
+    "anchors": [],
+    "containers": {
+      "content": {
+        "references": [
+          "rw59DDDAAA_D290_4904_98D7_23957485C252"
+        ],
+        "layoutViewExpanded": true
+      }
+    },
+    "context": {
+      "attributes": {
+        "locked": false,
+        "hidden": false
+      },
+      "dataCollections": [],
+      "globalContainerOverrides": [],
+      "globalPropertyOverrides": [],
+      "values": {}
+    },
+    "identifier": "rwF284BE65_B500_419B_AB6C_09660FCC6795",
+    "elementId": "com.realmacsoftware.rapidweaver.root"
+  }
+}

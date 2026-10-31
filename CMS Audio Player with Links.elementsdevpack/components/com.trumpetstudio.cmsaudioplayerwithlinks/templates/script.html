@@ -1,0 +1,584 @@
+@portal(bodyEnd, id: "com.trumpetstudio.cmsaudioplayerwithlinks.script", includeOnce: true)
+<script>
+window.caplAudio = window.caplAudio || (function () {
+    'use strict';
+
+    /* One registry for every audio component on the page rather than one per
+       pack. This component, the CMS Audio Player and Antenna each kept a private
+       list, so a page carrying two of them had two registries that could not see
+       each other and both tracks played at once. A plain array on window under a
+       neutral name lets any of them join without taking a dependency on the
+       others being present, or on load order.
+
+       Joining is separate from pausing: a player always joins so others can pause
+       it, while Pause Other Players decides whether this one does the pausing. */
+    function bus() {
+        window.__rwAudioBus = window.__rwAudioBus || [];
+        return window.__rwAudioBus;
+    }
+
+    /* Joining also drops anything no longer in the document. Pruning used to
+       happen only when a player started with Pause Other Players on, so a card
+       re-rendered over and over — the editor replaces component markup on every
+       settings change — left every old audio element, and through its listeners
+       the whole old card, referenced from the bus for as long as nobody pressed
+       play. A detached media element is already paused by the browser, so
+       dropping it loses nothing. */
+    function busAdd(el) {
+        var list = bus().filter(function (a) { return a.isConnected !== false; });
+        if (list.indexOf(el) === -1) { list.push(el); }
+        window.__rwAudioBus = list;
+    }
+
+    function busPauseOthers(me) {
+        // Drop players the CMS or editor has re-rendered away so the list cannot
+        // grow without bound across re-inits.
+        var list = bus().filter(function (a) {
+            return a === me || a.isConnected !== false;
+        });
+        window.__rwAudioBus = list;
+        list.forEach(function (a) { if (a !== me) a.pause(); });
+    }
+
+    /* An unresolved CMS token still arrives as a literal double-brace item
+       reference — that only happens in the editor preview, never in published
+       output. Published pages render an empty string when the field is blank,
+       so the two cases are told apart and treated differently:
+         token  -> keep the control visible but inert (card looks designed)
+         empty  -> hide the control (nothing to play / nowhere to link)
+
+       NB: this file is an .html template, so the Elements language would
+       interpolate any literal double braces written here. Keep them out —
+       isToken() builds the sequence by concatenation for exactly that reason. */
+    function isToken(v) {
+        return typeof v === 'string' && v.indexOf('{' + '{') !== -1;
+    }
+
+    function isEmpty(v) {
+        return !v || !v.trim();
+    }
+
+    /* A link is only as safe as its scheme. These URLs are authored content —
+       usually a CMS field — and escaping does not neuter javascript: or data:,
+       which execute on click in this site's own origin. http(s) covers every
+       streaming service, mailto and tel cover a contact slot, and a bare or
+       root-relative path has no scheme at all because it is a project resource.
+       Anything else is dropped and the slot is then treated exactly as an empty
+       one. Antenna solves the same problem server-side in $safeUrl/$localUrl.
+
+       The value is normalised the way the browser's URL parser will read it
+       before any test runs: that parser deletes every tab, carriage return and
+       line feed wherever it sits and strips control characters and spaces from
+       both ends. Testing the raw string let "java", a tab, then "script:" past
+       the scheme check as a relative path, which the browser then followed as
+       javascript:. The normalised string is also what gets returned, so the
+       test and the link always agree.
+
+       Returns the address to use, or '' when there is nothing safe to link to. */
+    function safeHref(v) {
+        var s = String(v == null ? '' : v)
+            .replace(/[\t\n\r]/g, '')
+            .replace(/^[\u0000-\u0020]+|[\u0000-\u0020]+$/g, '');
+        if (s === '') { return ''; }
+        if (s.indexOf('//') === 0) { return 'https:' + s; }
+        if (/^https?:\/\//i.test(s)) { return s; }
+        if (/^(mailto|tel):/i.test(s)) { return s; }
+        /* An address typed or pasted without its scheme — www.youtube.com/
+           followed by a channel — has no colon in front, so it would survive
+           below as a relative path and link to a page on the author's own site
+           that does not exist. Only the www. form is repaired, and narrowly on
+           purpose: anything looser would start misreading a project file such
+           as song.mp3 as a host name. The Link fields ask for https:// for the
+           rest. */
+        if (/^www\./i.test(s)) { return 'https://' + s; }
+        /* A scheme still present here is neither allowed nor a path: javascript:,
+           data: and vbscript: all match this and are dropped. A relative or
+           root-relative path has no scheme and survives. */
+        return /^[a-z][a-z0-9+.-]*:/i.test(s) ? '' : s;
+    }
+
+    /* The download attribute is honoured for same-origin addresses only. Point it
+       at another host — a CDN, a media subdomain, a podcast host — and browsers
+       ignore it, filename hint included, and treat the click as an ordinary
+       navigation: the visitor leaves the site and lands on the bare file. No
+       component code can grant itself that permission and no header on someone
+       else's bucket changes it, so the honest move is to stop promising a
+       download and open the file in a new tab instead, which at least leaves the
+       page behind it.
+
+       An address that cannot be parsed is treated as same-origin, so a browser
+       without URL support behaves exactly as it did before this check existed. */
+    function isCrossOrigin(href) {
+        if (typeof window.URL !== 'function') { return false; }
+        try {
+            return new window.URL(href, location.href).origin !== location.origin;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    /* Keeps what the button offers in step with what the browser will really do.
+       The label is the author's, so it is extended rather than replaced. */
+    function applyDownloadPolicy(a, href) {
+        if (!isCrossOrigin(href)) { return; }
+        a.removeAttribute('download');
+        a.setAttribute('target', '_blank');
+        a.setAttribute('rel', 'noopener');
+        var label = (a.getAttribute('aria-label') || 'Download') + ' (opens in a new tab)';
+        a.setAttribute('aria-label', label);
+        a.setAttribute('title', label);
+    }
+
+    /* Hours are carried explicitly: a 90-minute file previously read "90:00"
+       rather than "1:30:00", which is wrong for anything album- or
+       podcast-length. Short files keep the plain m:ss form. */
+    function fmt(sec) {
+        if (!isFinite(sec) || isNaN(sec)) return '0:00';
+        sec = Math.max(0, Math.floor(sec));
+        var h = Math.floor(sec / 3600);
+        var m = Math.floor((sec % 3600) / 60);
+        var s = sec % 60;
+        var ss = (s < 10 ? '0' : '') + s;
+        if (h > 0) return h + ':' + (m < 10 ? '0' : '') + m + ':' + ss;
+        return m + ':' + ss;
+    }
+
+    function num(v, fallback) {
+        var n = parseFloat(v);
+        return isFinite(n) && n > 0 ? n : fallback;
+    }
+
+    function init(root) {
+        if (root.dataset.caplReady === '1') return;
+        root.dataset.caplReady = '1';
+
+        var audio = root.querySelector('.capl-audio-el');
+        var transport = root.querySelector('.capl-transport');
+        var progress = root.querySelector('.capl-progress');
+        var toggle = root.querySelector('.capl-toggle');
+        var playIcon = root.querySelector('.capl-icon-play');
+        var pauseIcon = root.querySelector('.capl-icon-pause');
+        var track = root.querySelector('.capl-track');
+        var fill = root.querySelector('.capl-fill');
+        var time = root.querySelector('.capl-time');
+
+        var circleSkip = num(root.dataset.skipCircle, 20);
+        var arrowSkip = num(root.dataset.skipArrow, 20);
+
+        /* Author-supplied label text, so a non-English site can translate the
+           transport. Defaults match the control defaults, so an instance saved
+           before these existed reads exactly as it did. The skip patterns carry
+           a %s standing in for that button's own number of seconds. */
+        var L = {
+            play:  root.dataset.labelPlay  || 'Play',
+            pause: root.dataset.labelPause || 'Pause',
+            back:  root.dataset.labelBack  || 'Back %s seconds',
+            fwd:   root.dataset.labelFwd   || 'Forward %s seconds',
+            dead:  root.dataset.labelDead  || 'Audio unavailable'
+        };
+        function skipLabel(pattern, secs) {
+            return String(pattern).replace('%s', secs);
+        }
+
+        setupCover(root);
+        setupServices(root);
+
+        /* ── Decide what the transport should do ───────────────────── */
+
+        var src = audio ? (audio.getAttribute('data-src') || '') : '';
+        var downloadRow = root.querySelector('.capl-download-row');
+        var downloadLink = root.querySelector('.capl-download');
+
+        if (!audio || isEmpty(src)) {
+            // Published page with no audio on this CMS item.
+            if (transport) transport.classList.add('capl-hidden');
+            if (progress) progress.classList.add('capl-hidden');
+            // Nothing to download either, and an <a download> with no href
+            // navigates to the current page rather than doing nothing.
+            if (downloadRow) downloadRow.classList.add('capl-hidden');
+            return;
+        }
+
+        if (isToken(src)) {
+            // Editor preview — show the controls, don't wire them up.
+            if (transport) transport.classList.add('capl-inert');
+            if (progress) progress.classList.add('capl-inert');
+            if (downloadRow) downloadRow.classList.add('capl-inert');
+            return;
+        }
+
+        audio.src = src;
+        /* Same resolved address as the player, so the two can never disagree —
+           but scheme-checked, because an <a href> follows schemes an <audio src>
+           quietly ignores. Nothing safe to point at means no download row. */
+        var dlHref = safeHref(src);
+        if (dlHref === '') {
+            if (downloadRow) downloadRow.classList.add('capl-hidden');
+        } else if (downloadLink) {
+            downloadLink.setAttribute('href', dlHref);
+            applyDownloadPolicy(downloadLink, dlHref);
+        }
+        audio.loop = root.dataset.loop === '1';
+        busAdd(audio);
+
+        var autoPause = root.dataset.autopause === '1';
+
+        /* ── Wiring ───────────────────────────────────────────────── */
+
+        /* Set once by the error handler below and never cleared. With the
+           shipped preload of none a broken source only fails after Play is
+           pressed, and the browser then fires error, rejects the play() promise
+           and fires pause, in that order — so both of the later two used to
+           relabel a dead, disabled button with the Play label and a screen
+           reader announced a control that could not do anything, in place of
+           the author's Audio Unavailable text. */
+        var unavailable = false;
+
+        function setIcons(playing) {
+            if (playIcon) playIcon.classList.toggle('hidden', playing);
+            if (pauseIcon) pauseIcon.classList.toggle('hidden', !playing);
+            if (toggle && !unavailable) toggle.setAttribute('aria-label', playing ? L.pause : L.play);
+        }
+
+        function update() {
+            var d = audio.duration;
+            var c = audio.currentTime;
+            /* A live stream has no length. It read "0:37 / 0:00", and a screen
+               reader heard "0:37 of 0:00"; the position alone is the truth. */
+            var live = d === Infinity;
+            var pct = (isFinite(d) && d > 0) ? (c / d) * 100 : 0;
+            if (fill) fill.style.width = pct + '%';
+            if (track) {
+                track.setAttribute('aria-valuenow', Math.round(pct));
+                /* A screen reader reads aria-valuenow as a bare percentage, which
+                   tells a listener nothing useful about where they are in a track.
+                   valuetext replaces it with the actual position. */
+                track.setAttribute('aria-valuetext', live ? fmt(c) : fmt(c) + ' of ' + fmt(d));
+            }
+            if (time) time.textContent = live ? fmt(c) : fmt(c) + ' / ' + fmt(d);
+        }
+
+        /* Every seek goes through here, in all four players. A server that
+           ignores Range requests hands Chromium a file it treats as a stream:
+           seekable stays [0, 0] however much has arrived, any time set is
+           clamped to 0, and every skip, click on the bar or arrow key restarted
+           the track. Such a seek is now refused, which keeps the listener's
+           place. A live stream is held to what has arrived: a time past that
+           left the player seeking, silent, until the broadcast caught up. */
+        function goTo(t) {
+            /* A source that failed has nothing to seek in: the time label
+               went on counting skips ("0:20 / 0:00") under a disabled button. */
+            if (unavailable) return;
+            var s = audio.seekable;
+            if (t > 0 && s && s.length && s.end(s.length - 1) === 0) return;
+            if (audio.duration === Infinity) {
+                var b = audio.buffered;
+                if (!b || !b.length) return;
+                t = Math.min(t, b.end(b.length - 1));
+            }
+            audio.currentTime = t;
+        }
+
+        function nudge(delta) {
+            var d = audio.duration;
+            var next = audio.currentTime + delta;
+            if (next < 0) next = 0;
+            if (isFinite(d) && d > 0 && next > d) next = d;
+            goTo(next);
+            update();
+        }
+
+        if (toggle) {
+            toggle.addEventListener('click', function () {
+                if (audio.paused) {
+                    if (autoPause) { busPauseOthers(audio); }
+                    var p = audio.play();
+                    if (p && p.catch) p.catch(function () { setIcons(false); });
+                } else {
+                    audio.pause();
+                }
+            });
+        }
+
+        bindSkip(root, '.capl-skip-back-circle', function () { nudge(-circleSkip); }, skipLabel(L.back, circleSkip));
+        bindSkip(root, '.capl-skip-fwd-circle', function () { nudge(circleSkip); }, skipLabel(L.fwd, circleSkip));
+        bindSkip(root, '.capl-skip-back-arrow', function () { nudge(-arrowSkip); }, skipLabel(L.back, arrowSkip));
+        bindSkip(root, '.capl-skip-fwd-arrow', function () { nudge(arrowSkip); }, skipLabel(L.fwd, arrowSkip));
+
+        if (track) {
+            var scrubbing = false;
+
+            function seekTo(clientX) {
+                if (unavailable) return;
+                var rect = track.getBoundingClientRect();
+                if (!rect.width) return;
+                var pct = (clientX - rect.left) / rect.width;
+                pct = Math.min(1, Math.max(0, pct));
+
+                if (isFinite(audio.duration) && audio.duration > 0) {
+                    goTo(pct * audio.duration);
+                } else {
+                    /* An infinite duration is not "not loaded yet": it is a live
+                       stream (internet radio, Icecast, live HLS) whose metadata
+                       has loaded and which has no end to seek towards. Treating
+                       it as unloaded called load() on a playing element, which
+                       stopped the audio without a pause event — the button kept
+                       saying Pause — and then threw assigning a fraction of
+                       infinity to currentTime. There is nothing to seek to, so
+                       do nothing. */
+                    if (audio.duration === Infinity) { return; }
+                    // Duration unknown (preload="none") — load first, then seek,
+                    // and only if what arrives is a finite length.
+                    audio.addEventListener('loadedmetadata', function once() {
+                        audio.removeEventListener('loadedmetadata', once);
+                        if (isFinite(audio.duration) && audio.duration > 0) {
+                            goTo(pct * audio.duration);
+                        }
+                    });
+                    /* Only when nothing is already on its way. A Play still
+                       loading is fetching the metadata this waits for, and
+                       load() would abort it: playback stopped, with no pause
+                       event to put the button back to Play. A scrub would
+                       restart the request on every pointer move. */
+                    if (audio.networkState !== audio.NETWORK_LOADING) { audio.load(); }
+                }
+                update();
+            }
+
+            track.addEventListener('pointerdown', function (e) {
+                scrubbing = true;
+                /* Feature-tested and wrapped, the same in all four audio
+                   players: setPointerCapture throws NotFoundError for a pointer
+                   id that is no longer active, which would abort the handler
+                   before the seek below ever ran. */
+                if (track.setPointerCapture) {
+                    try { track.setPointerCapture(e.pointerId); } catch (err) { /* not capturable */ }
+                }
+                seekTo(e.clientX);
+            });
+            track.addEventListener('pointermove', function (e) {
+                if (scrubbing) seekTo(e.clientX);
+            });
+            track.addEventListener('pointerup', function () { scrubbing = false; });
+            track.addEventListener('pointercancel', function () { scrubbing = false; });
+
+            /* The track is announced as a slider, so it answers the keys a
+               slider is expected to: Right and Up forward, Left and Down back,
+               Home to the start and End to the finish. Each is claimed with
+               preventDefault, or Up, Down, Home and End would scroll the page
+               while the slider has focus. End needs a finite length, so a live
+               stream or a file whose metadata has not loaded stays where it is. */
+            track.addEventListener('keydown', function (e) {
+                if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    nudge(5);
+                } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    nudge(-5);
+                } else if (e.key === 'Home') {
+                    e.preventDefault();
+                    audio.currentTime = 0;
+                    update();
+                } else if (e.key === 'End') {
+                    e.preventDefault();
+                    if (isFinite(audio.duration) && audio.duration > 0) {
+                        goTo(audio.duration);
+                        update();
+                    }
+                } else if (e.key === ' ' || e.key === 'Enter') {
+                    e.preventDefault();
+                    if (toggle) toggle.click();
+                }
+            });
+        }
+
+        audio.addEventListener('play', function () { setIcons(true); });
+        audio.addEventListener('pause', function () { setIcons(false); });
+        audio.addEventListener('ended', function () {
+            setIcons(false);
+            audio.currentTime = 0;
+            update();
+        });
+        audio.addEventListener('timeupdate', update);
+        audio.addEventListener('loadedmetadata', update);
+        audio.addEventListener('durationchange', update);
+        /* A source that resolves but will not load left an enabled button that
+           did nothing at all. Say so instead. */
+        audio.addEventListener('error', function () {
+            unavailable = true;
+            if (toggle) {
+                toggle.disabled = true;
+                toggle.setAttribute('aria-label', L.dead);
+                toggle.classList.add('capl-inert');
+            }
+            /* The bar and the skip buttons can do nothing either, so they stop
+               offering to: under "Audio unavailable" a screen reader still
+               announced an operable slider and working skip buttons. */
+            if (track) { track.setAttribute('aria-disabled', 'true'); track.tabIndex = -1; }
+            [].forEach.call(root.querySelectorAll('.capl-skip-back-circle, .capl-skip-fwd-circle, .capl-skip-back-arrow, .capl-skip-fwd-arrow'), function (b) {
+                b.disabled = true;
+            });
+        });
+
+        update();
+    }
+
+    function bindSkip(root, selector, handler, label) {
+        var btn = root.querySelector(selector);
+        if (!btn) return;
+        btn.setAttribute('aria-label', label);
+        btn.setAttribute('title', label);
+        btn.addEventListener('click', handler);
+    }
+
+    /* Flag a cover that fails to load so the CSS placeholder takes over. */
+    function setupCover(root) {
+        var cover = root.querySelector('.capl-cover') || root.querySelector('.capl-cover-static');
+        if (!cover) return;
+
+        // The CMS alt field may be blank or an unresolved token — fall back to
+        // the visible title rather than shipping the raw token as alt text.
+        var alt = cover.getAttribute('alt') || '';
+        if (isEmpty(alt) || isToken(alt)) {
+            var titleEl = root.querySelector('.capl-title');
+            cover.setAttribute('alt', titleEl ? titleEl.textContent.trim() : '');
+        }
+
+        /* Artwork and placeholder now overlay inside one square, with the
+           placeholder on top by default. This code only ever REMOVES the
+           placeholder, and only once real pixels have decoded — so every failure
+           path (no script, unresolved binding, 404, blocked request) leaves a
+           correct-looking card instead of an empty box. */
+        var ph = root.querySelector('.capl-cover-ph');
+        function revealArtwork() {
+            if (ph) ph.classList.add('capl-hidden');
+        }
+        function keepPlaceholder() {
+            if (ph) {
+                ph.classList.remove('capl-hidden');
+                return;
+            }
+            /* The static (project-resource) cover has no placeholder layer behind
+               it, so a failed load would otherwise leave the browser's own
+               broken-image glyph sitting in the card. capl-broken is what
+               styles.css already has a rule for. */
+            cover.classList.add('capl-broken');
+        }
+
+        cover.addEventListener('load', function () {
+            if (cover.naturalWidth > 0) { revealArtwork(); }
+        });
+        cover.addEventListener('error', keepPlaceholder);
+
+        /* Promote data-src to src only once the address is known to be real.
+           Leaving the binding in the src attribute meant the browser fetched a
+           URL named after the token, and a failure painted its own broken-image
+           glyph. With no src there is nothing to fetch and nothing to draw. */
+        var want = cover.getAttribute('data-src') || '';
+        if (isEmpty(want) || isToken(want)) {
+            keepPlaceholder();
+            return;
+        }
+        cover.setAttribute('src', want);
+        // A cached image can already be complete before the load handler binds.
+        if (cover.complete && cover.naturalWidth > 0) { revealArtwork(); }
+    }
+
+    /* Hide streaming icons with no destination; keep unresolved ones inert. */
+    function setupServices(root) {
+        /* The download link borrows .capl-service for its styling but is not a
+           streaming link: it gets its href later, from the resolved audio
+           address, so judging it on an empty href here would hide it every
+           time. It must also not count towards whether the services row has
+           any live links. */
+        var links = root.querySelectorAll('.capl-service:not(.capl-download)');
+        var live = 0;
+
+        links.forEach(function (a) {
+            var href = a.getAttribute('href') || '';
+            var hide = function () {
+                a.classList.add('capl-hidden');
+                a.setAttribute('aria-hidden', 'true');
+                a.setAttribute('tabindex', '-1');
+            };
+            if (isEmpty(href)) {
+                hide();
+            } else if (isToken(href)) {
+                a.classList.add('capl-inert');
+                a.removeAttribute('href');
+                live++;
+            } else {
+                /* A scheme this component will not follow is nothing to link to,
+                   so the slot is hidden exactly as a blank one is rather than
+                   shipping a live link that runs script on click. */
+                var safe = safeHref(href);
+                if (safe === '') {
+                    a.removeAttribute('href');
+                    hide();
+                    return;
+                }
+                a.setAttribute('href', safe);
+                live++;
+            }
+        });
+
+        /* No live link means no row. The number of slots in the markup is
+           deliberately not part of this test: every slot switched off in the
+           Inspector leaves the row present but empty, and an empty flex child
+           still spends one of the card's row gaps below the last live row. */
+        if (live === 0) {
+            var row = root.querySelector('.capl-services');
+            if (row) row.classList.add('capl-hidden');
+        }
+    }
+
+    var SELECTOR = '.capl-audio';
+
+    function initAll() {
+        document.querySelectorAll(SELECTOR).forEach(init);
+    }
+
+    /* Wire up only what just arrived, rather than re-querying the whole page. */
+    function initWithin(node) {
+        if (!node || node.nodeType !== 1) { return; }
+        if (node.matches && node.matches(SELECTOR)) { init(node); }
+        if (node.querySelectorAll) { node.querySelectorAll(SELECTOR).forEach(init); }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAll);
+    } else {
+        initAll();
+    }
+
+    /* Players arrive after load in two situations that both matter, which is why
+       this runs on published pages and not only on the editing canvas.
+
+       In Elements the canvas replaces component DOM as settings change, and a
+       one-shot pass leaves the replacement unwired until a full reload. On a
+       published page the CMS Load More button asks the JSON API for the next
+       batch of collection items and appends them in place — so the first batch
+       of players worked and every later one arrived dead, with a transport that
+       did nothing and artwork stuck on its placeholder. A podcast archive is
+       exactly a collection plus Load More, and an author whose test collection
+       fits on one page never sees it.
+
+       This previously ran a document-wide query one frame after any mutation,
+       which was genuine overhead on a busy page. Walking only the added nodes
+       keeps the cost proportional to what actually changed; init is idempotent,
+       so anything already wired is skipped. window.caplAudio.initAll() remains
+       available for markup injected by something this cannot see. */
+    if (window.MutationObserver) {
+        var mo = new MutationObserver(function (records) {
+            for (var i = 0; i < records.length; i++) {
+                var added = records[i].addedNodes;
+                for (var j = 0; j < added.length; j++) { initWithin(added[j]); }
+            }
+        });
+        mo.observe(document.body, { childList: true, subtree: true });
+    }
+
+    return { initAll: initAll, init: init };
+})();
+</script>
+@endportal
