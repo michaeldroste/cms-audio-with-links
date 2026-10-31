@@ -1,6 +1,6 @@
 [README.md](https://github.com/user-attachments/files/31518048/README.md)
 # cms-audio-with-links
-A single-track audio player card for RapidWeaver Elements. Cover artwork, title and artist, a real transport with scrubbing and skip buttons, and a row of streaming links underneath. Bind it to a CMS collection for one card per item, or drop in an audio file and use it standalone. Free, MIT licensed, no PHP required.
+A single-track audio player card for [RapidWeaver Elements](https://www.realmacsoftware.com/elements). Cover artwork, title and artist, a real transport with scrubbing and skip buttons, and a row of streaming links underneath. Bind it to a CMS collection for one card per item, or drop in an audio file and use it standalone. Free, MIT licensed, no PHP required.
 # CMS Audio Player with Links
 
 A single-track audio player card for RapidWeaver Elements. Cover artwork, title
