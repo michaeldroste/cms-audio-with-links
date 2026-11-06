@@ -1,7 +1,15 @@
 @portal(bodyEnd, id: "com.trumpetstudio.cmsaudioplayerwithlinks.script", includeOnce: true)
 <script>
-window.caplAudio = window.caplAudio || (function () {
+/* Asked for what it is, not merely whether it exists: an element with this id on
+   the page is also window.caplAudio, which would have kept the engine from
+   starting and left every player dead without an error. */
+window.caplAudio = (window.caplAudio && typeof window.caplAudio.initAll === 'function') ? window.caplAudio : (function () {
     'use strict';
+
+    /* Which players are wired, held here because a data attribute travels with a
+       copy: a card cloned by a lightbox or a slider arrived marked as ready, with
+       none of its listeners, and nothing could revive it. */
+    var wired = new WeakSet();
 
     /* One registry for every audio component on the page rather than one per
        pack. This component, the CMS Audio Player and Antenna each kept a private
@@ -149,7 +157,8 @@ window.caplAudio = window.caplAudio || (function () {
     }
 
     function init(root) {
-        if (root.dataset.caplReady === '1') return;
+        if (wired.has(root)) return;
+        wired.add(root);
         root.dataset.caplReady = '1';
 
         var audio = root.querySelector('.capl-audio-el');
@@ -207,11 +216,14 @@ window.caplAudio = window.caplAudio || (function () {
             return;
         }
 
-        audio.src = src;
-        /* Same resolved address as the player, so the two can never disagree —
-           but scheme-checked, because an <a href> follows schemes an <audio src>
-           quietly ignores. Nothing safe to point at means no download row. */
+        /* One resolved address for the player and the download, so the two can
+           never disagree. It used to be the raw value for the player, so an address
+           written www.example.com/song.mp3 gave a dead player beside a working
+           Download. Scheme-checked, because an <a href> follows schemes an
+           <audio src> quietly ignores: nothing safe to point at means no download
+           row, and the player keeps the value it was given. */
         var dlHref = safeHref(src);
+        audio.src = dlHref || src;
         if (dlHref === '') {
             if (downloadRow) downloadRow.classList.add('capl-hidden');
         } else if (downloadLink) {
@@ -233,6 +245,46 @@ window.caplAudio = window.caplAudio || (function () {
            reader announced a control that could not do anything, in place of
            the author's Audio Unavailable text. */
         var unavailable = false;
+
+        /* That latch is for a source that never delivered anything. One that has
+           delivered its metadata is not dead, so a failure after that is the
+           network: a tunnel, a host that answered 503 for one range. It used to
+           latch exactly like a missing file, and the listener had to reload the
+           page and lost their place. Now the next Play reloads and goes back to
+           where it stopped. */
+        var everLoaded = false;
+        var needsReload = false;
+        var resumeAt = 0;
+        var statusEl = null;
+
+        /* The failure label only ever sat on a button that had just lost focus, so
+           nobody could see it and a screen reader might not say it. The element
+           exists before its text does, or many screen readers stay silent. */
+        function say(text, takeFocus) {
+            if (!statusEl) {
+                statusEl = document.createElement('p');
+                statusEl.className = time ? time.className.replace('capl-time', 'capl-status') : 'capl-status';
+                statusEl.setAttribute('role', 'status');
+                statusEl.tabIndex = -1;
+                statusEl.style.margin = '0';
+                statusEl.style.fontSize = '0.75rem';
+                var after = progress || transport;
+                if (after && after.parentNode) {
+                    after.parentNode.insertBefore(statusEl, after.nextSibling);
+                } else {
+                    root.appendChild(statusEl);
+                }
+            }
+            window.setTimeout(function () {
+                if (!statusEl) return;
+                statusEl.textContent = text;
+                if (takeFocus) statusEl.focus();
+            }, 60);
+        }
+        function unsay() {
+            if (statusEl && statusEl.parentNode) statusEl.parentNode.removeChild(statusEl);
+            statusEl = null;
+        }
 
         function setIcons(playing) {
             if (playIcon) playIcon.classList.toggle('hidden', playing);
@@ -268,7 +320,7 @@ window.caplAudio = window.caplAudio || (function () {
         function goTo(t) {
             /* A source that failed has nothing to seek in: the time label
                went on counting skips ("0:20 / 0:00") under a disabled button. */
-            if (unavailable) return;
+            if (unavailable || needsReload) return;
             var s = audio.seekable;
             if (t > 0 && s && s.length && s.end(s.length - 1) === 0) return;
             if (audio.duration === Infinity) {
@@ -281,6 +333,11 @@ window.caplAudio = window.caplAudio || (function () {
 
         function nudge(delta) {
             var d = audio.duration;
+            /* Waits for the metadata, as CMS Audio Player does. Before it there was
+               no length to hold the jump to, so a skip past the end made the next
+               Play stop at once and looked as if Play did nothing. A live stream's
+               Infinity passes, and goTo holds that to what has arrived. */
+            if (!(d > 0)) return;
             var next = audio.currentTime + delta;
             if (next < 0) next = 0;
             if (isFinite(d) && d > 0 && next > d) next = d;
@@ -290,8 +347,10 @@ window.caplAudio = window.caplAudio || (function () {
 
         if (toggle) {
             toggle.addEventListener('click', function () {
-                if (audio.paused) {
+                if (audio.paused || needsReload) {
                     if (autoPause) { busPauseOthers(audio); }
+                    /* Only load() clears a failure; play() alone would do nothing. */
+                    if (needsReload) { needsReload = false; audio.load(); }
                     var p = audio.play();
                     if (p && p.catch) p.catch(function () { setIcons(false); });
                 } else {
@@ -309,7 +368,7 @@ window.caplAudio = window.caplAudio || (function () {
             var scrubbing = false;
 
             function seekTo(clientX) {
-                if (unavailable) return;
+                if (unavailable || needsReload) return;
                 var rect = track.getBoundingClientRect();
                 if (!rect.width) return;
                 var pct = (clientX - rect.left) / rect.width;
@@ -346,6 +405,9 @@ window.caplAudio = window.caplAudio || (function () {
             }
 
             track.addEventListener('pointerdown', function (e) {
+                /* The primary button only. A right-click or a control-click is
+                   asking for a menu, and it moved the track as well. */
+                if (e.button !== 0 || e.ctrlKey) return;
                 scrubbing = true;
                 /* Feature-tested and wrapped, the same in all four audio
                    players: setPointerCapture throws NotFoundError for a pointer
@@ -357,7 +419,10 @@ window.caplAudio = window.caplAudio || (function () {
                 seekTo(e.clientX);
             });
             track.addEventListener('pointermove', function (e) {
-                if (scrubbing) seekTo(e.clientX);
+                if (!scrubbing) return;
+                /* No button held means the release went somewhere this never saw. */
+                if (!e.buttons) { scrubbing = false; return; }
+                seekTo(e.clientX);
             });
             track.addEventListener('pointerup', function () { scrubbing = false; });
             track.addEventListener('pointercancel', function () { scrubbing = false; });
@@ -400,11 +465,30 @@ window.caplAudio = window.caplAudio || (function () {
             update();
         });
         audio.addEventListener('timeupdate', update);
-        audio.addEventListener('loadedmetadata', update);
+        audio.addEventListener('loadedmetadata', function () {
+            everLoaded = true;
+            if (resumeAt > 0) {
+                var at = resumeAt;
+                resumeAt = 0;
+                goTo(at);
+            }
+            update();
+        });
         audio.addEventListener('durationchange', update);
+        audio.addEventListener('playing', unsay);
         /* A source that resolves but will not load left an enabled button that
            did nothing at all. Say so instead. */
         audio.addEventListener('error', function () {
+            if (everLoaded) {
+                if (audio.currentTime > 0) resumeAt = audio.currentTime;
+                needsReload = true;
+                setIcons(false);
+                say(L.dead, false);
+                return;
+            }
+            var skips = root.querySelectorAll('.capl-skip-back-circle, .capl-skip-fwd-circle, .capl-skip-back-arrow, .capl-skip-fwd-arrow');
+            var active = document.activeElement;
+            var lostFocus = !!active && (active === toggle || [].indexOf.call(skips, active) !== -1);
             unavailable = true;
             if (toggle) {
                 toggle.disabled = true;
@@ -414,10 +498,12 @@ window.caplAudio = window.caplAudio || (function () {
             /* The bar and the skip buttons can do nothing either, so they stop
                offering to: under "Audio unavailable" a screen reader still
                announced an operable slider and working skip buttons. */
-            if (track) { track.setAttribute('aria-disabled', 'true'); track.tabIndex = -1; }
-            [].forEach.call(root.querySelectorAll('.capl-skip-back-circle, .capl-skip-fwd-circle, .capl-skip-back-arrow, .capl-skip-fwd-arrow'), function (b) {
+            if (track) { track.setAttribute('aria-disabled', 'true'); track.tabIndex = -1; track.classList.add('capl-inert'); }
+            [].forEach.call(skips, function (b) {
                 b.disabled = true;
+                b.classList.add('capl-inert');
             });
+            say(L.dead, lostFocus);
         });
 
         update();

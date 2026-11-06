@@ -112,9 +112,10 @@ switches leaves a band of blank space under the player.
 
 ## Translating the interface
 
-Everything a screen reader announces is editable under **Labels** — the play and
-pause buttons, the progress bar, both skip directions and the audio-failure
-message. The two skip labels contain `%s`, which is replaced with that button's
+What a screen reader announces is editable under **Labels** — the play and pause
+buttons, the progress bar, both skip directions and the audio-failure message.
+Two small phrases are not: the "of" in a spoken position such as "0:40 of 3:10",
+and "(opens in a new tab)" on a Download that points at another site. The two skip labels contain `%s`, which is replaced with that button's
 own number of seconds, so "Back %s seconds" reads as "Back 10 seconds" on one
 pair and "Back 30 seconds" on the other.
 
@@ -228,6 +229,25 @@ They can hold different amounts, which is the point: 10 seconds on one pair and
   than a component one: **Project Settings → Advanced**, the legacy tap-to-hover
   option added in Elements 3.0.7. The links and buttons themselves are
   unaffected — they work exactly as before, just without the hover change.
+
+## Build 14 — a dropped connection, and failures you can see
+
+Nothing to do; this reaches cards you have already placed.
+
+- **A dropped connection no longer kills the player for good.** A track that had
+  started and then lost its host used to go to Audio unavailable until the page was
+  reloaded, and the listener lost their place. It now says so, stays live, and Play
+  picks up where it stopped. Only a source that never loaded stays disabled.
+- **The failure message is now written on the card**, not only spoken by a screen
+  reader, and a keyboard user's focus goes to it rather than being lost. The bar and
+  skip buttons dim with it.
+- **An address written `www.example.com/song.mp3` now plays.** It gave a dead player
+  beside a working Download.
+- **A skip before the file has started loading is ignored.** A jump past the end made
+  the next Play stop at once, as if Play did nothing.
+- **A right-click on the seek bar no longer seeks.**
+- **A card copied by a lightbox or slider now works**, and an element on the page
+  that happens to share the engine's name no longer stops every player.
 
 ## Build 13 — alignment per screen size, Show Transport, and a dead track
 
